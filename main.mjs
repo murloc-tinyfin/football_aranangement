@@ -110,9 +110,13 @@ function addUserToTeam(team) {
         return;
     }
 
+    console.log(`Attempting to add ${currentUser} to ${team}`); // Debug log
+
     // Get the current team data from Firebase
     get(ref(db, "teams")).then(snapshot => {
         let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+
+        console.log("Current Teams Before Update:", teams);
 
         // ✅ Remove user from all teams before adding them to a new one
         Object.keys(teams).forEach(key => {
@@ -122,6 +126,8 @@ function addUserToTeam(team) {
         // ✅ Add user to the selected team
         teams[team].push(currentUser);
 
+        console.log("Updated Teams After Change:", teams);
+
         // ✅ Update Firebase database
         set(ref(db, "teams"), teams).then(() => {
             console.log(`User ${currentUser} moved to ${team}`);
@@ -129,6 +135,7 @@ function addUserToTeam(team) {
         });
     });
 }
+
 
 
 // ✅ Function to handle button clicks (Keep this where `setupButtonToggles()` originally was)
@@ -144,17 +151,21 @@ function setupButtonToggles() {
         
         if (button) {
             // ✅ Remove existing event listeners before adding a new one
-            button.replaceWith(button.cloneNode(true));
-            const newButton = document.getElementById(buttonId);
+            const newButton = button.cloneNode(true);
+            button.parentNode.replaceChild(newButton, button);
 
             newButton.addEventListener("click", () => {
+                console.log(`Button ${buttonId} clicked, selecting ${listId}`);
                 addUserToTeam(listId);
             });
+        } else {
+            console.error(`Button ${buttonId} not found!`);
         }
     });
 
     updateAllLists(); // Refresh lists when button toggles are set
 }
+
 
 
 // ✅ Function to remove user from all lists on sign-out
