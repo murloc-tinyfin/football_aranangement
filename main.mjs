@@ -130,31 +130,21 @@ function updateUI(reset = false) {
     const signUpButton = document.getElementById("signUpButton");
 
     if (reset || !currentUser) {
-        // ✅ Ensure lists are hidden when user is not signed in
-        document.getElementById("list1").style.display = "none";
-        document.getElementById("list2").style.display = "none";
-        document.getElementById("list3").style.display = "none";
-
+        buttonContainer.style.visibility = "hidden"; /* Hide without shifting */
         document.getElementById("list1").innerHTML = "";
         document.getElementById("list2").innerHTML = "";
         document.getElementById("list3").innerHTML = "";
-
-        buttonContainer.style.display = "none"; // Hide buttons
         welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
         signUpButton.textContent = "Sign In 登录";
     } else {
-        // ✅ Ensure lists and buttons show correctly when signed in
-        document.getElementById("list1").style.display = "block";
-        document.getElementById("list2").style.display = "block";
-        document.getElementById("list3").style.display = "block";
-
-        buttonContainer.style.display = "block";
-        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
+        buttonContainer.style.visibility = "visible"; /* Show while keeping layout */
+        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team.`;
         signUpButton.textContent = "Sign Out 登出";
-        setupButtonToggles(); // Refresh buttons
-        updateAllLists(); // Load team lists only after login
+        setupButtonToggles();
+        updateAllLists();
     }
 }
+
 
 
 
