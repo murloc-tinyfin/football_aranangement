@@ -19,9 +19,12 @@ body {
 /* Each button + list container (stacking list under the button) */
 .button-group {
     display: flex;
-    flex-direction: column; /* Ensure list appears directly under button */
+    flex-direction: column; /* Stack the button above the list */
     align-items: center;
+    justify-content: flex-start;
+    width: 160px; /* Ensure consistent width for all groups */
 }
+
 
 
 /* Button styling */
@@ -71,11 +74,12 @@ ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    width: 150px;
+    width: 100%;
     background: white;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     min-height: 50px; /* Ensures lists remain visible */
+    margin-top: 5px
 }
 
 li {
