@@ -110,32 +110,47 @@ function addUserToTeam(team) {
     }
 
     get(ref(db, "teams")).then(snapshot => {
-        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+        let teams = snapshot.val(); // Get current team structure
 
-        // Check if the user is already in the selected team
+        // ✅ Ensure teams object exists
+        if (!teams) {
+            console.warn("⚠️ No teams found in database, initializing...");
+            teams = { list1: [], list2: [], list3: [] };
+        }
+
+        // ✅ Ensure each team list exists
+        ["list1", "list2", "list3"].forEach(list => {
+            if (!teams[list]) {
+                console.warn(`⚠️ Team ${list} is missing, creating it now...`);
+                teams[list] = [];
+            }
+        });
+
+        // ✅ Check if user is already in the selected team
         let isAlreadyInTeam = teams[team]?.includes(currentUser);
 
         if (isAlreadyInTeam) {
-            // If the user is in the selected team, remove them (toggle off)
+            // ✅ Remove user from the selected team (toggle feature)
             teams[team] = teams[team].filter(name => name !== currentUser);
             console.log(`✅ User ${currentUser} removed from ${team}`);
         } else {
-            // Remove user from all teams before adding them to the new team
+            // ✅ Remove user from all teams first
             Object.keys(teams).forEach(key => {
                 teams[key] = teams[key].filter(name => name !== currentUser);
             });
 
-            // Add user to the selected team
+            // ✅ Add user to the selected team
             teams[team].push(currentUser);
             console.log(`✅ User ${currentUser} moved to ${team}`);
         }
 
-        // Update Firebase database
+        // ✅ Update Firebase database with the corrected structure
         set(ref(db, "teams"), teams).then(() => {
             updateAllLists(); // Refresh the UI
         }).catch(error => console.error("❌ Firebase write error:", error));
     }).catch(error => console.error("❌ Firebase read error:", error));
 }
+
 
 
 
