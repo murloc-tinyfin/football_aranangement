@@ -122,15 +122,24 @@ function updateUI(reset = false) {
     const signUpButton = document.getElementById("signUpButton");
 
     if (reset || !currentUser) {
-        // Hide lists when user is not signed in
+        // ✅ Hide lists & remove content when user is not signed in
+        document.getElementById("list1").style.display = "none";
+        document.getElementById("list2").style.display = "none";
+        document.getElementById("list3").style.display = "none";
+
         document.getElementById("list1").innerHTML = "";
         document.getElementById("list2").innerHTML = "";
         document.getElementById("list3").innerHTML = "";
+
         buttonContainer.style.display = "none"; // Hide buttons
         welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
         signUpButton.textContent = "Sign In 登录";
     } else {
-        // Show buttons and allow team selection when signed in
+        // ✅ Show lists and buttons when user signs in
+        document.getElementById("list1").style.display = "block";
+        document.getElementById("list2").style.display = "block";
+        document.getElementById("list3").style.display = "block";
+
         buttonContainer.style.display = "block";
         welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
         signUpButton.textContent = "Sign Out 登出";
@@ -138,6 +147,7 @@ function updateUI(reset = false) {
         updateAllLists(); // Load team lists only after login
     }
 }
+
 
 
 
