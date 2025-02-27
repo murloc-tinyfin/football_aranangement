@@ -43,21 +43,23 @@
     <!-- Include the JavaScript file as a module -->
     <script type="module" src="main.mjs"></script>
     <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
 
   const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBg-FUAbfC_YHbM1F8E6IEfqrXDh8dLSlA",
+    authDomain: "football-arrangement.firebaseapp.com",
+    databaseURL: "https://football-arrangement-default-rtdb.firebaseio.com",
+    projectId: "football-arrangement",
+    storageBucket: "football-arrangement.firebasestorage.app",
+    messagingSenderId: "560366403839",
+    appId: "1:560366403839:web:df338019123d32aa120cca",
+    measurementId: "G-SNMDGK3YP7"
   };
 
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  const analytics = getAnalytics(app);
 </script>
 
 </body>
