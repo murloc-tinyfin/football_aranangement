@@ -1,4 +1,9 @@
-// Function to calculate next Saturday
+// ✅ Import Firebase modules (Place this at the top of `main.mjs`)
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+const db = getDatabase();  // Firebase database instance
+
+// ✅ Function to calculate and display the next Saturday (Keep this at the top)
 function getNextSaturdayLocal() {
     document.addEventListener("DOMContentLoaded", () => {
         let currentDate = new Date();
@@ -17,7 +22,24 @@ function getNextSaturdayLocal() {
     });
 }
 
-// Function to handle sign-ups and show buttons
+// ✅ Function to update all lists (Place this above `handleSignUp()`)
+function updateAllLists() {
+    const teamsRef = ref(db, "teams");
+
+    // Listen for changes in the database and update lists in real-time
+    onValue(teamsRef, (snapshot) => {
+        const userLists = snapshot.val() || { list1: [], list2: [], list3: [] };
+
+        ["list1", "list2", "list3"].forEach(listId => {
+            const listElement = document.getElementById(listId);
+            if (listElement) {
+                listElement.innerHTML = userLists[listId].map(name => `<li>${name}</li>`).join("");
+            }
+        });
+    });
+}
+
+// ✅ Function to handle sign-ups and show buttons (Keep this in the same place)
 function handleSignUp() {
     document.addEventListener("DOMContentLoaded", () => {
         const signUpButton = document.getElementById("signUpButton");
@@ -64,23 +86,30 @@ function handleSignUp() {
     });
 }
 
-// Function to remove user from all lists on sign-out
-function removeUserFromLists() {
-    let userLists = JSON.parse(localStorage.getItem("userLists")) || { list1: [], list2: [], list3: [] };
-    let currentUser = localStorage.getItem("currentUser");
+// ✅ Function to add the current user to a selected team (Place this before `setupButtonToggles()`)
+function addUserToTeam(team) {
+    get(ref(db, "teams")).then(snapshot => {
+        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+        let currentUser = localStorage.getItem("currentUser");
 
-    if (currentUser) {
-        Object.keys(userLists).forEach(key => {
-            userLists[key] = userLists[key].filter(name => name !== currentUser);
+        if (!currentUser) {
+            alert("Please sign in first.");
+            return;
+        }
+
+        // Remove user from all other teams before adding to the new one
+        Object.keys(teams).forEach(key => {
+            teams[key] = teams[key].filter(name => name !== currentUser);
         });
 
-        localStorage.setItem("userLists", JSON.stringify(userLists)); // Save updated lists
-    }
+        teams[team].push(currentUser);  // Add user to the selected team
 
-    updateAllLists(); // Refresh displayed lists
+        // Update the database with the new team lists
+        set(ref(db, "teams"), teams);
+    });
 }
 
-
+// ✅ Function to handle button clicks (Keep this where `setupButtonToggles()` originally was)
 function setupButtonToggles() {
     let userLists = JSON.parse(localStorage.getItem("userLists")) || { list1: [], list2: [], list3: [] };
 
@@ -100,78 +129,34 @@ function setupButtonToggles() {
             const newButton = document.getElementById(buttonId);
 
             newButton.addEventListener("click", () => {
-                let currentUser = localStorage.getItem("currentUser");
-                if (!currentUser) {
-                    alert("Please sign up first! 请先登录");
-                    return;
-                }
-
-                // Check if the user is already in the clicked list
-                if (userLists[listId].includes(currentUser)) {
-                    // If already in the list, remove them (so they are in no list)
-                    userLists[listId] = userLists[listId].filter(name => name !== currentUser);
-                } else {
-                    // Remove user from any other list
-                    Object.keys(userLists).forEach(key => {
-                        userLists[key] = userLists[key].filter(name => name !== currentUser);
-                    });
-
-                    // Add user to the selected list
-                    userLists[listId].push(currentUser);
-                }
-
-                // Save updated lists
-                localStorage.setItem("userLists", JSON.stringify(userLists));
-
-                // Refresh displayed lists
-                updateAllLists();
+                addUserToTeam(listId);
             });
 
-            // Ensure list is always visible and updated on page load
-            updateAllLists();
+            updateAllLists(); // Refresh lists
         }
     });
 }
 
-// Function to update all lists' display
-function updateAllLists() {
-    let userLists = JSON.parse(localStorage.getItem("userLists")) || { list1: [], list2: [], list3: [] };
-    ["list1", "list2", "list3"].forEach(listId => {
-        const listElement = document.getElementById(listId);
-        if (listElement) {
-            listElement.innerHTML = userLists[listId].map(name => `<li>${name}</li>`).join("");
+// ✅ Function to remove user from all lists on sign-out
+function removeUserFromLists() {
+    get(ref(db, "teams")).then(snapshot => {
+        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+        let currentUser = localStorage.getItem("currentUser");
+
+        if (currentUser) {
+            Object.keys(teams).forEach(key => {
+                teams[key] = teams[key].filter(name => name !== currentUser);
+            });
+
+            set(ref(db, "teams"), teams); // Save updated lists
         }
+
+        updateAllLists(); // Refresh displayed lists
     });
 }
 
-
-
-// Function to update the displayed list
-function updateListDisplay(listId) {
-    let userLists = JSON.parse(localStorage.getItem("userLists")) || { list1: [], list2: [], list3: [] };
-    const listElement = document.getElementById(listId);
-    if (listElement) {
-        listElement.innerHTML = userLists[listId].map(name => `<li>${name}</li>`).join("");
-    }
-}
-
-
-
-
-// Function to refresh name lists when a new user signs up
-function updateNameLists() {
-    const storedNames = JSON.parse(localStorage.getItem("userNames")) || [];
-
-    const lists = ["list1", "list2", "list3"];
-    lists.forEach(listId => {
-        const listElement = document.getElementById(listId);
-        if (listElement) {
-            listElement.innerHTML = storedNames.map(name => `<li>${name}</li>`).join("");
-        }
-    });
-}
-
-// Initialize functions
+// ✅ Initialize Functions (Place this at the bottom of `main.mjs`)
 handleSignUp();
 setupButtonToggles();
 getNextSaturdayLocal();
+updateAllLists(); // Ensure lists load on page start
