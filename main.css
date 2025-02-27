@@ -6,20 +6,20 @@ body {
     margin: 20px;
 }
 
-/* Flex container to align buttons in a row */
+/* Flex container for buttons in a single row */
 #buttonContainer {
     display: flex;
-    flex-direction: row; /* Ensures horizontal layout */
+    flex-direction: row; /* Align buttons in a horizontal line */
     justify-content: center;
-    align-items: flex-start; /* Align lists properly */
-    gap: 30px; /* Space between button groups */
+    align-items: center;
+    gap: 30px; /* Space between buttons */
     margin-top: 20px;
 }
 
-/* Each button + list container */
+/* Each button + list container (stacking list under the button) */
 .button-group {
     display: flex;
-    flex-direction: row; /* Stack button and list vertically */
+    flex-direction: column; /* Stack button and list vertically */
     align-items: center;
 }
 
@@ -34,6 +34,7 @@ button {
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
     width: 150px;
+    margin-bottom: 10px; /* Add space between button and list */
 }
 
 button:hover {
@@ -41,11 +42,34 @@ button:hover {
     transform: scale(1.05);
 }
 
+/* Specific colors for teams */
+#btn1 {
+    background-color: #FFA500; /* Orange */
+}
+
+#btn1:hover {
+    background-color: #e69500;
+}
+
+#btn2 {
+    background-color: #FFFFFF; /* White */
+    color: black;
+    border: 1px solid #ccc;
+}
+
+#btn2:hover {
+    background-color: #f0f0f0;
+}
+
+#btn3 {
+    background-color: #007BFF; /* Default Blue */
+}
+
 /* List styling */
 ul {
     list-style: none;
     padding: 0;
-    margin-top: 10px;
+    margin: 0;
     width: 150px;
     background: white;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -78,3 +102,4 @@ li:last-child {
     font-size: 18px;
     font-weight: bold;
 }
+
