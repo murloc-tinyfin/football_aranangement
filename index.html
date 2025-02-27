@@ -44,24 +44,27 @@
     <script type="module" src="main.mjs"></script>
     <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBg-FUAbfC_YHbM1F8E6IEfqrXDh8dLSlA",
     authDomain: "football-arrangement.firebaseapp.com",
     databaseURL: "https://football-arrangement-default-rtdb.firebaseio.com",
     projectId: "football-arrangement",
-    storageBucket: "football-arrangement.firebasestorage.app",
+    storageBucket: "football-arrangement.appspot.com",
     messagingSenderId: "560366403839",
     appId: "1:560366403839:web:df338019123d32aa120cca",
     measurementId: "G-SNMDGK3YP7"
   };
 
-  // Initialize Firebase
+  // ✅ Correct Firebase Initialization
   const app = initializeApp(firebaseConfig);
-  const db = getAnalytics(app);
-  windows.db = db;  
+  const db = getDatabase(app);  // Get Realtime Database, not Analytics
+
+  // ✅ Make Firebase accessible in `main.mjs`
+  window.db = db;
 </script>
+
 
 </body>
 </html>
