@@ -44,8 +44,9 @@
     <script type="module" src="main.mjs"></script>
     <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
+  import { getDatabase } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
+  // ✅ Make sure to use the correct Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyBg-FUAbfC_YHbM1F8E6IEfqrXDh8dLSlA",
     authDomain: "football-arrangement.firebaseapp.com",
@@ -57,13 +58,15 @@
     measurementId: "G-SNMDGK3YP7"
   };
 
-  // ✅ Correct Firebase Initialization
+  // ✅ Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);  // Get Realtime Database, not Analytics
+  const db = getDatabase(app); // Use getDatabase, not getAnalytics
 
-  // ✅ Make Firebase accessible in `main.mjs`
+  // ✅ Store Firebase instance in window object
+  window.firebaseApp = app;
   window.db = db;
 </script>
+
 
 
 </body>
