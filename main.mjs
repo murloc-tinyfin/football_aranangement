@@ -1,7 +1,12 @@
-// ✅ Import Firebase modules (Place this at the top of `main.mjs`)
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-const db = getDatabase();  // Firebase database instance
+// ✅ Get Firebase instance from window (which was set in index.html)
+const db = window.db;
+
+if (!db) {
+    console.error("Firebase Database is not initialized! Check index.html.");
+}
+
 
 // ✅ Function to calculate and display the next Saturday (Keep this at the top)
 function getNextSaturdayLocal() {
