@@ -93,7 +93,14 @@ function handleSignUp() {
     document.addEventListener("DOMContentLoaded", () => {
         const signUpButton = document.getElementById("signUpButton");
 
-        signUpButton.addEventListener("click", () => {
+        // ✅ Run UI update on load to fix glitches
+        updateUI();
+
+        // ✅ Remove old event listeners before adding a new one
+        signUpButton.replaceWith(signUpButton.cloneNode(true));
+        const newSignUpButton = document.getElementById("signUpButton");
+
+        newSignUpButton.addEventListener("click", () => {
             if (localStorage.getItem("currentUser")) {
                 // ✅ User is signing out
                 removeUserFromLists().then(() => {
@@ -105,7 +112,7 @@ function handleSignUp() {
                 const userName = prompt("Enter your name 输入你的名字").trim();
                 if (userName) {
                     localStorage.setItem("currentUser", userName);
-                    updateUI(); // Ensure UI refreshes after sign-in
+                    updateUI(); // Refresh UI after sign-in
                 } else {
                     alert("Name cannot be empty! 名字不能为空"); // Prevent empty names
                 }
@@ -115,6 +122,7 @@ function handleSignUp() {
 }
 
 
+
 function updateUI(reset = false) {
     let currentUser = localStorage.getItem("currentUser");
     const buttonContainer = document.getElementById("buttonContainer");
@@ -122,7 +130,7 @@ function updateUI(reset = false) {
     const signUpButton = document.getElementById("signUpButton");
 
     if (reset || !currentUser) {
-        // ✅ Hide lists & remove content when user is not signed in
+        // ✅ Ensure lists are hidden when user is not signed in
         document.getElementById("list1").style.display = "none";
         document.getElementById("list2").style.display = "none";
         document.getElementById("list3").style.display = "none";
@@ -135,7 +143,7 @@ function updateUI(reset = false) {
         welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
         signUpButton.textContent = "Sign In 登录";
     } else {
-        // ✅ Show lists and buttons when user signs in
+        // ✅ Ensure lists and buttons show correctly when signed in
         document.getElementById("list1").style.display = "block";
         document.getElementById("list2").style.display = "block";
         document.getElementById("list3").style.display = "block";
@@ -147,6 +155,7 @@ function updateUI(reset = false) {
         updateAllLists(); // Load team lists only after login
     }
 }
+
 
 
 
