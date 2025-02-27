@@ -112,13 +112,15 @@ function addUserToTeam(team) {
     get(ref(db, "teams")).then(snapshot => {
         let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
 
-        // Check if user is already in the selected team (toggle feature)
-        if (teams[team] && teams[team].includes(currentUser)) {
-            // Remove user from the current team
+        // Check if the user is already in the selected team
+        let isAlreadyInTeam = teams[team]?.includes(currentUser);
+
+        if (isAlreadyInTeam) {
+            // If the user is in the selected team, remove them (toggle off)
             teams[team] = teams[team].filter(name => name !== currentUser);
             console.log(`✅ User ${currentUser} removed from ${team}`);
         } else {
-            // Remove user from all teams first
+            // Remove user from all teams before adding them to the new team
             Object.keys(teams).forEach(key => {
                 teams[key] = teams[key].filter(name => name !== currentUser);
             });
@@ -130,10 +132,11 @@ function addUserToTeam(team) {
 
         // Update Firebase database
         set(ref(db, "teams"), teams).then(() => {
-            updateAllLists();
+            updateAllLists(); // Refresh the UI
         }).catch(error => console.error("❌ Firebase write error:", error));
     }).catch(error => console.error("❌ Firebase read error:", error));
 }
+
 
 
 // ✅ Function to handle button clicks (Keep this where `setupButtonToggles()` originally was)
@@ -146,9 +149,9 @@ function setupButtonToggles() {
 
     buttons.forEach(({ buttonId, listId }) => {
         const button = document.getElementById(buttonId);
-
+        
         if (button) {
-            // Remove existing event listener by replacing button node
+            // Remove all previous event listeners by replacing the button node
             const newButton = button.cloneNode(true);
             button.parentNode.replaceChild(newButton, button);
 
@@ -157,31 +160,13 @@ function setupButtonToggles() {
                 addUserToTeam(listId);
             });
         } else {
-            console.error(`Button ${buttonId} not found!`);
+            console.error(`❌ Button ${buttonId} not found!`);
         }
     });
 
-    updateAllLists(); // Refresh UI after button setup
+    updateAllLists(); // Ensure the UI updates after button setup
 }
 
-
-// ✅ Function to remove user from all lists on sign-out
-function removeUserFromLists() {
-    get(ref(db, "teams")).then(snapshot => {
-        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
-        let currentUser = localStorage.getItem("currentUser");
-
-        if (currentUser) {
-            Object.keys(teams).forEach(key => {
-                teams[key] = teams[key].filter(name => name !== currentUser);
-            });
-
-            set(ref(db, "teams"), teams); // Save updated lists
-        }
-
-        updateAllLists(); // Refresh displayed lists
-    });
-}
 
 // ✅ Initialize Functions (Place this at the bottom of `main.mjs`)
 handleSignUp();
