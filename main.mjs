@@ -120,27 +120,18 @@ function addUserToTeam(team) {
     }
 
     get(ref(db, "teams")).then(snapshot => {
-        let teams = snapshot.val(); // Get current team structure
-
-        // ✅ Ensure teams object exists
-        if (!teams) {
-            console.warn("⚠️ No teams found in database, initializing...");
-            teams = { list1: [], list2: [], list3: [] };
-        }
+        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
 
         // ✅ Ensure each team list exists
         ["list1", "list2", "list3"].forEach(list => {
-            if (!teams[list]) {
-                console.warn(`⚠️ Team ${list} is missing, creating it now...`);
-                teams[list] = [];
-            }
+            teams[list] = teams[list] || [];
         });
 
         // ✅ Check if user is already in the selected team
         let isAlreadyInTeam = teams[team]?.includes(currentUser);
 
         if (isAlreadyInTeam) {
-            // ✅ Remove user from the selected team (toggle feature)
+            // ✅ Remove user from the selected team (toggle off)
             teams[team] = teams[team].filter(name => name !== currentUser);
             console.log(`✅ User ${currentUser} removed from ${team}`);
         } else {
@@ -154,10 +145,10 @@ function addUserToTeam(team) {
             console.log(`✅ User ${currentUser} moved to ${team}`);
         }
 
-        // ✅ Update Firebase database with the corrected structure
-        set(ref(db, "teams"), teams).then(() => {
-            updateAllLists(); // Refresh the UI
-        }).catch(error => console.error("❌ Firebase write error:", error));
+        // ✅ Update Firebase database
+        set(ref(db, "teams"), teams)
+            .then(() => updateAllLists()) // Refresh UI
+            .catch(error => console.error("❌ Firebase write error:", error));
     }).catch(error => console.error("❌ Firebase read error:", error));
 }
 
@@ -174,23 +165,21 @@ function setupButtonToggles() {
 
     buttons.forEach(({ buttonId, listId }) => {
         const button = document.getElementById(buttonId);
-        
         if (button) {
-            // Remove all previous event listeners by replacing the button node
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
+            // ✅ Remove previous event listeners to avoid duplication
+            button.replaceWith(button.cloneNode(true));
+            const newButton = document.getElementById(buttonId);
 
             newButton.addEventListener("click", () => {
-                console.log(`Button ${buttonId} clicked, selecting ${listId}`);
+                console.log(`🔄 Button ${buttonId} clicked, selecting ${listId}`);
                 addUserToTeam(listId);
             });
         } else {
             console.error(`❌ Button ${buttonId} not found!`);
         }
     });
-
-    updateAllLists(); // Ensure the UI updates after button setup
 }
+
 
 
 // ✅ Initialize Functions (Place this at the bottom of `main.mjs`)
