@@ -104,17 +104,28 @@ function handleSignUp() {
 // ✅ Function to add the current user to a selected team (Place this before `setupButtonToggles()`)
 function addUserToTeam(team) {
     const currentUser = localStorage.getItem("currentUser");
-    
+
     if (!currentUser) {
         alert("Please sign in first.");
         return;
     }
 
-    console.log(`Attempting to add ${currentUser} to ${team}`); // Debug log
+    console.log(`Attempting to add ${currentUser} to ${team}`);
 
-    // Get the current team data from Firebase
     get(ref(db, "teams")).then(snapshot => {
-        let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+        let teams = snapshot.val();
+
+        // ✅ If teams does not exist, initialize it
+        if (!teams) {
+            console.warn("⚠️ No teams found in database, initializing...");
+            teams = { list1: [], list2: [], list3: [] };
+        }
+
+        // ✅ If the specific team is missing, create it
+        if (!teams[team]) {
+            console.warn(`⚠️ Team ${team} is missing, creating it now...`);
+            teams[team] = [];
+        }
 
         console.log("Current Teams Before Update:", teams);
 
@@ -130,10 +141,10 @@ function addUserToTeam(team) {
 
         // ✅ Update Firebase database
         set(ref(db, "teams"), teams).then(() => {
-            console.log(`User ${currentUser} moved to ${team}`);
-            updateAllLists(); // Refresh lists after update
-        });
-    });
+            console.log(`✅ User ${currentUser} moved to ${team}`);
+            updateAllLists();
+        }).catch(error => console.error("❌ Firebase write error:", error));
+    }).catch(error => console.error("❌ Firebase read error:", error));
 }
 
 
