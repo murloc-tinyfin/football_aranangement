@@ -9,21 +9,24 @@ body {
 /* Flex container for buttons in a single row */
 #buttonContainer {
     display: flex;
-    flex-direction: row; /* Align buttons in a horizontal line */
-    justify-content: center;
-    align-items: flex-start;
-    gap: 30px; /* Space between buttons */
+    flex-direction: row; /* Ensure buttons are in a horizontal line */
+    justify-content: center; /* Keep them centered */
+    align-items: flex-start; /* Align lists properly */
+    gap: 20px; /* Space between button groups */
     margin-top: 20px;
+    width: 100%; /* Ensure it takes the full width */
 }
+
 
 /* Each button + list container (stacking list under the button) */
 .button-group {
     display: flex;
-    flex-direction: column; /* Stack the button above the list */
-    align-items: center;
-    justify-content: flex-start;
-    width: 160px; /* Ensure consistent width for all groups */
+    flex-direction: column; /* Stack button above list */
+    align-items: center; /* Ensure the list aligns with the button */
+    justify-content: center;
+    width: 150px; /* Keep each button group the same size */
 }
+
 
 
 
@@ -79,7 +82,7 @@ ul {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     min-height: 50px; /* Ensures lists remain visible */
-    margin-top: 5px
+    margin-top: 5px 0 0 0
 }
 
 li {
