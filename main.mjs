@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", getNextSaturdayLocal);
 function updateAllLists() {
     const teamsRef = ref(db, "teams");
 
-    // Listen for changes in the database and update lists in real-time
     onValue(teamsRef, (snapshot) => {
         const userLists = snapshot.val() || { list1: [], list2: [], list3: [] };
 
@@ -48,6 +47,7 @@ function updateAllLists() {
         });
     });
 }
+
 
 // ✅ Function to handle sign-ups and show buttons (Keep this in the same place)
 function handleSignUp() {
@@ -103,31 +103,36 @@ function handleSignUp() {
 
 // ✅ Function to add the current user to a selected team (Place this before `setupButtonToggles()`)
 function addUserToTeam(team) {
+    const currentUser = localStorage.getItem("currentUser");
+    
+    if (!currentUser) {
+        alert("Please sign in first.");
+        return;
+    }
+
+    // Get the current team data from Firebase
     get(ref(db, "teams")).then(snapshot => {
         let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
-        let currentUser = localStorage.getItem("currentUser");
 
-        if (!currentUser) {
-            alert("Please sign in first.");
-            return;
-        }
-
-        // Remove user from all other teams before adding to the new one
+        // ✅ Remove user from all teams before adding them to a new one
         Object.keys(teams).forEach(key => {
             teams[key] = teams[key].filter(name => name !== currentUser);
         });
 
-        teams[team].push(currentUser);  // Add user to the selected team
+        // ✅ Add user to the selected team
+        teams[team].push(currentUser);
 
-        // Update the database with the new team lists
-        set(ref(db, "teams"), teams);
+        // ✅ Update Firebase database
+        set(ref(db, "teams"), teams).then(() => {
+            console.log(`User ${currentUser} moved to ${team}`);
+            updateAllLists(); // Refresh lists after update
+        });
     });
 }
 
+
 // ✅ Function to handle button clicks (Keep this where `setupButtonToggles()` originally was)
 function setupButtonToggles() {
-    let userLists = JSON.parse(localStorage.getItem("userLists")) || { list1: [], list2: [], list3: [] };
-
     const buttons = [
         { buttonId: "btn1", listId: "list1" },
         { buttonId: "btn2", listId: "list2" },
@@ -136,21 +141,21 @@ function setupButtonToggles() {
 
     buttons.forEach(({ buttonId, listId }) => {
         const button = document.getElementById(buttonId);
-        const listElement = document.getElementById(listId);
-
-        if (button && listElement) {
-            // Remove existing event listeners to prevent duplication
-            button.replaceWith(button.cloneNode(true)); 
+        
+        if (button) {
+            // ✅ Remove existing event listeners before adding a new one
+            button.replaceWith(button.cloneNode(true));
             const newButton = document.getElementById(buttonId);
 
             newButton.addEventListener("click", () => {
                 addUserToTeam(listId);
             });
-
-            updateAllLists(); // Refresh lists
         }
     });
+
+    updateAllLists(); // Refresh lists when button toggles are set
 }
+
 
 // ✅ Function to remove user from all lists on sign-out
 function removeUserFromLists() {
