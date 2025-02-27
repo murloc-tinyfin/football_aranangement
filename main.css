@@ -11,7 +11,7 @@ body {
     display: flex;
     flex-direction: row; /* Align buttons in a horizontal line */
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     gap: 30px; /* Space between buttons */
     margin-top: 20px;
 }
@@ -19,9 +19,10 @@ body {
 /* Each button + list container (stacking list under the button) */
 .button-group {
     display: flex;
-    flex-direction: column; /* Stack button and list vertically */
+    flex-direction: column; /* Ensure list appears directly under button */
     align-items: center;
 }
+
 
 /* Button styling */
 button {
