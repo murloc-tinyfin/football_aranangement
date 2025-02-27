@@ -37,16 +37,26 @@ function updateAllLists() {
     const teamsRef = ref(db, "teams");
 
     onValue(teamsRef, (snapshot) => {
-        const userLists = snapshot.val() || { list1: [], list2: [], list3: [] };
+        let userLists = snapshot.val() || {}; // Ensure we always get an object
+
+        // ✅ Ensure lists always exist to prevent "undefined.map" error
+        userLists.list1 = userLists.list1 || [];
+        userLists.list2 = userLists.list2 || [];
+        userLists.list3 = userLists.list3 || [];
 
         ["list1", "list2", "list3"].forEach(listId => {
             const listElement = document.getElementById(listId);
             if (listElement) {
-                listElement.innerHTML = userLists[listId].map(name => `<li>${name}</li>`).join("");
+                listElement.innerHTML = userLists[listId]
+                    .map(name => `<li>${name}</li>`)
+                    .join(""); // Render the list
             }
         });
+    }, {
+        onlyOnce: false // Keep real-time updates
     });
 }
+
 
 
 // ✅ Function to handle sign-ups and show buttons (Keep this in the same place)
