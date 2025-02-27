@@ -1,7 +1,7 @@
 import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
 // ✅ Get Firebase instance from window (which was set in index.html)
-const db = window.db;
+const db = window.db || getDatabase();
 
 if (!db) {
     console.error("Firebase Database is not initialized! Check index.html.");
