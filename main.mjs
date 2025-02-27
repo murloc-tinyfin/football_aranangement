@@ -5,22 +5,24 @@ const db = getDatabase();  // Firebase database instance
 
 // ✅ Function to calculate and display the next Saturday (Keep this at the top)
 function getNextSaturdayLocal() {
-    document.addEventListener("DOMContentLoaded", () => {
-        let currentDate = new Date();
-        let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7 || 7;
-        let nextSaturday = new Date(currentDate);
-        nextSaturday.setDate(currentDate.getDate() + daysUntilSaturday);
+    let currentDate = new Date();
+    let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7 || 7;
+    let nextSaturday = new Date(currentDate);
+    nextSaturday.setDate(currentDate.getDate() + daysUntilSaturday);
 
-        let formattedDate = `${nextSaturday.getFullYear()}/${
-            String(nextSaturday.getMonth() + 1).padStart(2, '0')}/${
-            String(nextSaturday.getDate()).padStart(2, '0')}`;
+    let formattedDate = `${nextSaturday.getFullYear()}/${
+        String(nextSaturday.getMonth() + 1).padStart(2, '0')}/${
+        String(nextSaturday.getDate()).padStart(2, '0')}`;
 
-        const element = document.getElementById("nextSaturday");
-        if (element) {
-            element.textContent = `Next Saturday: ${formattedDate}\n下一个周六: ${formattedDate}`;
-        }
-    });
+    const element = document.getElementById("nextSaturday");
+    if (element) {
+        element.textContent = `Next Saturday: ${formattedDate}\n下一个周六: ${formattedDate}`;
+    }
 }
+
+// ✅ Call it when the page loads
+document.addEventListener("DOMContentLoaded", getNextSaturdayLocal);
+
 
 // ✅ Function to update all lists (Place this above `handleSignUp()`)
 function updateAllLists() {
@@ -67,24 +69,29 @@ function handleSignUp() {
         });
 
         function updateUI(reset = false) {
-            let currentUser = localStorage.getItem("currentUser");
+        let currentUser = localStorage.getItem("currentUser");
+        const buttonContainer = document.getElementById("buttonContainer");
 
-            if (reset || !currentUser) {
-                // Reset UI when signing out
-                welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
-                signUpButton.textContent = "Sign In 登录";
-                buttonContainer.style.display = "none"; // Hide buttons
-                updateAllLists(); // Ensure lists update after sign-out
-            } else {
-                // Show UI when signing in
-                welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
-                signUpButton.textContent = "Sign Out 登出";
-                buttonContainer.style.display = "block"; // Show buttons
-                setupButtonToggles(); // Refresh buttons after signing in
-            }
+        if (reset || !currentUser) {
+            // Hide lists when user is not signed in
+            document.getElementById("list1").innerHTML = "";
+            document.getElementById("list2").innerHTML = "";
+            document.getElementById("list3").innerHTML = "";
+            buttonContainer.style.display = "none"; // Hide buttons
+            welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
+            signUpButton.textContent = "Sign In 登录";
+        } else {
+            // Show buttons and allow team selection when signed in
+            buttonContainer.style.display = "block";
+            welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
+            signUpButton.textContent = "Sign Out 登出";
+            setupButtonToggles(); // Refresh buttons
+            updateAllLists(); // Load team lists only after login
         }
-    });
-}
+    }
+
+        });
+    }
 
 // ✅ Function to add the current user to a selected team (Place this before `setupButtonToggles()`)
 function addUserToTeam(team) {
@@ -159,4 +166,3 @@ function removeUserFromLists() {
 handleSignUp();
 setupButtonToggles();
 getNextSaturdayLocal();
-updateAllLists(); // Ensure lists load on page start
