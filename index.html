@@ -41,7 +41,6 @@
     <button id="signUpButton">Sign up<br>登录</button>
 
     <!-- Include the JavaScript file as a module -->
-    <script type="module" src="main.mjs"></script>
     <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
   import { getDatabase } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
@@ -66,6 +65,8 @@
   window.firebaseApp = app;
   window.db = db;
 </script>
+    
+    <script type="module" src="main.mjs"></script>
 
 
 
