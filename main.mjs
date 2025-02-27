@@ -1,11 +1,14 @@
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 // ✅ Get Firebase instance from window (which was set in index.html)
 const db = window.db || getDatabase();
 
-if (!db) {
+// ✅ Ensure Firebase is initialized before using it
+if (!window.db) {
     console.error("Firebase Database is not initialized! Check index.html.");
 }
+
+
 
 
 // ✅ Function to calculate and display the next Saturday (Keep this at the top)
