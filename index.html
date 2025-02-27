@@ -44,7 +44,7 @@
     <script type="module" src="main.mjs"></script>
     <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-analytics.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBg-FUAbfC_YHbM1F8E6IEfqrXDh8dLSlA",
@@ -59,7 +59,8 @@
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  const db = getAnalytics(app);
+  windows.db = db;  
 </script>
 
 </body>
