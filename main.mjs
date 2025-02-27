@@ -57,59 +57,89 @@ function updateAllLists() {
     });
 }
 
+function removeUserFromLists() {
+    return new Promise((resolve, reject) => {
+        const currentUser = localStorage.getItem("currentUser");
+        if (!currentUser) return resolve(); // No user logged in
+
+        get(ref(db, "teams")).then(snapshot => {
+            let teams = snapshot.val() || { list1: [], list2: [], list3: [] };
+
+            // ✅ Remove user from all teams
+            Object.keys(teams).forEach(key => {
+                teams[key] = teams[key].filter(name => name !== currentUser);
+            });
+
+            // ✅ Update Firebase
+            set(ref(db, "teams"), teams)
+                .then(() => {
+                    console.log(`✅ User ${currentUser} removed from all teams`);
+                    resolve();
+                })
+                .catch(error => {
+                    console.error("❌ Firebase write error:", error);
+                    reject(error);
+                });
+        }).catch(error => {
+            console.error("❌ Firebase read error:", error);
+            reject(error);
+        });
+    });
+}
 
 
 // ✅ Function to handle sign-ups and show buttons (Keep this in the same place)
 function handleSignUp() {
     document.addEventListener("DOMContentLoaded", () => {
         const signUpButton = document.getElementById("signUpButton");
-        const welcomeMessage = document.getElementById("welcomeMessage");
-        const buttonContainer = document.getElementById("buttonContainer");
-
-        updateUI(); // Ensure UI updates when the page loads
 
         signUpButton.addEventListener("click", () => {
             if (localStorage.getItem("currentUser")) {
-                // Sign out process
-                removeUserFromLists(); // Remove user from all lists before signing out
-                localStorage.removeItem("currentUser");
-                updateUI(true); // Reset UI completely
+                // ✅ User is signing out
+                removeUserFromLists().then(() => {
+                    localStorage.removeItem("currentUser");
+                    updateUI(true); // Reset UI after sign-out
+                }).catch(error => console.error("❌ Error signing out:", error));
             } else {
-                // Sign up process
+                // ✅ User is signing in
                 const userName = prompt("Enter your name 输入你的名字").trim();
                 if (userName) {
                     localStorage.setItem("currentUser", userName);
-                    updateUI(); // Ensure UI refreshes after signing in
+                    updateUI(); // Ensure UI refreshes after sign-in
                 } else {
                     alert("Name cannot be empty! 名字不能为空"); // Prevent empty names
                 }
             }
         });
+    });
+}
 
-        function updateUI(reset = false) {
-        let currentUser = localStorage.getItem("currentUser");
-        const buttonContainer = document.getElementById("buttonContainer");
 
-        if (reset || !currentUser) {
-            // Hide lists when user is not signed in
-            document.getElementById("list1").innerHTML = "";
-            document.getElementById("list2").innerHTML = "";
-            document.getElementById("list3").innerHTML = "";
-            buttonContainer.style.display = "none"; // Hide buttons
-            welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
-            signUpButton.textContent = "Sign In 登录";
-        } else {
-            // Show buttons and allow team selection when signed in
-            buttonContainer.style.display = "block";
-            welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
-            signUpButton.textContent = "Sign Out 登出";
-            setupButtonToggles(); // Refresh buttons
-            updateAllLists(); // Load team lists only after login
-        }
+function updateUI(reset = false) {
+    let currentUser = localStorage.getItem("currentUser");
+    const buttonContainer = document.getElementById("buttonContainer");
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    const signUpButton = document.getElementById("signUpButton");
+
+    if (reset || !currentUser) {
+        // Hide lists when user is not signed in
+        document.getElementById("list1").innerHTML = "";
+        document.getElementById("list2").innerHTML = "";
+        document.getElementById("list3").innerHTML = "";
+        buttonContainer.style.display = "none"; // Hide buttons
+        welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
+        signUpButton.textContent = "Sign In 登录";
+    } else {
+        // Show buttons and allow team selection when signed in
+        buttonContainer.style.display = "block";
+        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team to sign up to. 欢迎, ${currentUser}!选择一个队报名`;
+        signUpButton.textContent = "Sign Out 登出";
+        setupButtonToggles(); // Refresh buttons
+        updateAllLists(); // Load team lists only after login
     }
+}
 
-        });
-    }
+
 
 // ✅ Function to add the current user to a selected team (Place this before `setupButtonToggles()`)
 function addUserToTeam(team) {
@@ -182,7 +212,7 @@ function setupButtonToggles() {
 
 
 
-// ✅ Initialize Functions (Place this at the bottom of `main.mjs`)
+// ✅ Initialize Functions
 handleSignUp();
 setupButtonToggles();
 getNextSaturdayLocal();
