@@ -2,7 +2,7 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f4f4f4;
+    background-color: #e3f2e1;
     margin: 20px;
 }
 
@@ -97,11 +97,11 @@ li:last-child {
 /* Sign-up button */
 #signUpButton {
     margin-top: 20px;
-    background-color: #28a745;
+    background-color: #FF7043;
 }
 
 #signUpButton:hover {
-    background-color: #218838;
+    background-color: #E64A19;
 }
 
 /* Welcome message */
