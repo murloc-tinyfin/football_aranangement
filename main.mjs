@@ -24,7 +24,7 @@ function getNextSaturdayLocal() {
 
     const element = document.getElementById("nextSaturday");
     if (element) {
-        element.textContent = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
+        element.innerHTML = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
     }
 }
 
@@ -134,12 +134,12 @@ function updateUI(reset = false) {
         document.getElementById("list1").innerHTML = "";
         document.getElementById("list2").innerHTML = "";
         document.getElementById("list3").innerHTML = "";
-        welcomeMessage.textContent = "Welcome! Please sign in. 欢迎！请登录";
-        signUpButton.textContent = "Sign In 登录";
+        welcomeMessage.innerHTML = "Welcome! Please sign in. 欢迎！请登录";
+        signUpButton.innerHTML = "Sign In 登录";
     } else {
         buttonContainer.style.visibility = "visible"; /* Show while keeping layout */
-        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team. <br> 欢迎, ${currentUser}! 选择一个队伍.`;
-        signUpButton.textContent = "Sign Out 登出";
+        welcomeMessage.innerHTML = `Welcome, ${currentUser}! Choose a team. <br> 欢迎, ${currentUser}! 选择一个队伍.`;
+        signUpButton.innerHTML = "Sign Out 登出";
         setupButtonToggles();
         updateAllLists();
     }
