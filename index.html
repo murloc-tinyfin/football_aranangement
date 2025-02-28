@@ -4,13 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>足球报名系统</title>
-    <style>
-        #buttonContainer {
-            visibility: hidden; /* Keep space reserved but hidden */
-        }
-    </style>
 
-    <link rel="stylesheet" href="main.css">
+    <script>
+        // Detect if the user is on a mobile device
+        function loadCSS() {
+            let link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                link.href = "mobile.css"; // Load mobile-specific CSS
+            } else {
+                link.href = "main.css"; // Load desktop CSS
+            }
+
+            document.head.appendChild(link);
+        }
+
+        loadCSS(); // Run on page load
+    </script>
 </head>
 <body>
     <h1 id="nextSaturday">Loading.../加载中...</h1>
