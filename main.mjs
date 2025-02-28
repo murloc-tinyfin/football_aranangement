@@ -24,7 +24,7 @@ function getNextSaturdayLocal() {
 
     const element = document.getElementById("nextSaturday");
     if (element) {
-        element.textContent = `Next Saturday: ${formattedDate}\n下一个周六: ${formattedDate}`;
+        element.textContent = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
     }
 }
 
@@ -138,7 +138,7 @@ function updateUI(reset = false) {
         signUpButton.textContent = "Sign In 登录";
     } else {
         buttonContainer.style.visibility = "visible"; /* Show while keeping layout */
-        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team.`;
+        welcomeMessage.textContent = `Welcome, ${currentUser}! Choose a team. <br> 欢迎, ${currentUser}! 选择一个队伍.`;
         signUpButton.textContent = "Sign Out 登出";
         setupButtonToggles();
         updateAllLists();
