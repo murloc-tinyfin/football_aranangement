@@ -223,7 +223,8 @@ function setupAdminLogin() {
     // Create Admin Login Button
     const adminButton = document.createElement("button");
     adminButton.id = "adminLoginButton";
-    adminButton.innerText = "Admin Login";
+    adminButton.innerText = localStorage.getItem("isAdmin") ? "Admin Logged In" : "Admin Login";
+    adminButton.classList.add("auth-button"); // Apply same styling as Sign In button
     document.body.appendChild(adminButton);
 
     // Create Admin Password Input (Initially Hidden)
@@ -238,6 +239,7 @@ function setupAdminLogin() {
     const confirmAdminButton = document.createElement("button");
     confirmAdminButton.id = "confirmAdminButton";
     confirmAdminButton.innerText = "Confirm Admin Login";
+    confirmAdminButton.classList.add("auth-button"); // Apply same styling
     confirmAdminButton.style.display = "none";
     document.body.appendChild(confirmAdminButton);
 
@@ -256,6 +258,7 @@ function setupAdminLogin() {
         if (adminInput.value === "testpassword123") {
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
+            adminButton.innerText = "Admin Logged In"; // Update button text
             adminInput.style.display = "none";
             confirmAdminButton.style.display = "none";
         } else {
@@ -263,6 +266,7 @@ function setupAdminLogin() {
         }
     });
 }
+
 
 
 
