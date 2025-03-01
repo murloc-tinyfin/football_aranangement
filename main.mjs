@@ -219,9 +219,55 @@ function setupButtonToggles() {
     });
 }
 
+function setupAdminLogin() {
+    // Create Admin Login Button
+    const adminButton = document.createElement("button");
+    adminButton.id = "adminLoginButton";
+    adminButton.innerText = "Admin Login";
+    document.body.appendChild(adminButton);
+
+    // Create Admin Password Input (Initially Hidden)
+    const adminInput = document.createElement("input");
+    adminInput.id = "adminPasswordInput";
+    adminInput.type = "password";
+    adminInput.placeholder = "Enter admin password";
+    adminInput.style.display = "none";
+    document.body.appendChild(adminInput);
+
+    // Create Confirm Admin Login Button (Initially Hidden)
+    const confirmAdminButton = document.createElement("button");
+    confirmAdminButton.id = "confirmAdminButton";
+    confirmAdminButton.innerText = "Confirm Admin Login";
+    confirmAdminButton.style.display = "none";
+    document.body.appendChild(confirmAdminButton);
+
+    // Event Listener for Admin Login Button
+    adminButton.addEventListener("click", () => {
+        if (localStorage.getItem("currentUser")) {
+            adminInput.style.display = "block";
+            confirmAdminButton.style.display = "block";
+        } else {
+            alert("You must log in normally first.");
+        }
+    });
+
+    // Event Listener for Confirming Admin Login
+    confirmAdminButton.addEventListener("click", () => {
+        if (adminInput.value === "testpassword123") {
+            localStorage.setItem("isAdmin", "true");
+            alert("Admin access granted.");
+            adminInput.style.display = "none";
+            confirmAdminButton.style.display = "none";
+        } else {
+            alert("Incorrect password.");
+        }
+    });
+}
+
 
 
 // ✅ Initialize Functions
 handleSignUp();
 setupButtonToggles();
 getNextSaturdayLocal();
+setupAdminLogin();
