@@ -24,7 +24,7 @@ body {
     flex-direction: column; /* Stack button above list */
     align-items: center; /* Ensure the list aligns with the button */
     justify-content: center;
-    width: 150px; /* Keep each button group the same size */
+    width: 170px; /* Keep each button group the same size */
 }
 
 
