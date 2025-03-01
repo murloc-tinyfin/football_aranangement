@@ -17,7 +17,6 @@ body {
     width: 100%; /* Ensure it takes the full width */
 }
 
-
 /* Each button + list container (stacking list under the button) */
 .button-group {
     display: flex;
@@ -26,9 +25,6 @@ body {
     justify-content: center;
     width: 170px; /* Keep each button group the same size */
 }
-
-
-
 
 /* Button styling */
 button {
@@ -82,7 +78,7 @@ ul {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     min-height: 50px; /* Ensures lists remain visible */
-    margin-top: 5px 0 0 0
+    margin-top: 5px;
 }
 
 li {
@@ -94,14 +90,23 @@ li:last-child {
     border-bottom: none;
 }
 
-/* Sign-up button */
-#signUpButton {
-    margin-top: 20px;
+/* Sign-up button & Admin Login button should look the same */
+.auth-button, #signUpButton {
+    width: 170px;
+    padding: 14px;  /* Same padding for consistency */
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
     background-color: #FF7043;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 20px;
 }
 
-#signUpButton:hover {
+.auth-button:hover, #signUpButton:hover {
     background-color: #E64A19;
+    transform: scale(1.05);
 }
 
 /* Welcome message */
@@ -111,40 +116,13 @@ li:last-child {
     font-weight: bold;
 }
 
-#adminLoginButton,
-#confirmAdminButton {
-    margin-top: 10px;
-    background-color: #FF5733;
-}
-
-#adminLoginButton:hover,
-#confirmAdminButton:hover {
-    background-color: #C70039;
-}
-
-
-/* Apply same styling as sign-in button */
-.auth-button {
-    width: 170px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #FF5733;
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
-    margin-top: 10px;
-}
-
-.auth-button:hover {
-    background-color: #C70039;
-    transform: scale(1.05);
-}
-
+/* Input field for admin password */
 #adminPasswordInput {
     margin-top: 10px;
-    padding: 5px;
+    padding: 10px; /* Slightly increased padding for better appearance */
     font-size: 16px;
+    width: 160px; /* Matches button width */
+    border: 1px solid #ccc;
+    border-radius: 5px;
     display: none;
 }
