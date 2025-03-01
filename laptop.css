@@ -40,7 +40,7 @@ button {
     color: white;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
-    width: 150px;
+    width: 170px;
     margin-bottom: 10px; /* Add space between button and list */
 }
 
