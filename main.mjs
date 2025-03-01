@@ -232,7 +232,7 @@ function setupAdminLogin() {
     adminInput.id = "adminPasswordInput";
     adminInput.type = "password";
     adminInput.placeholder = "Enter admin password";
-    adminInput.style.display = "none";
+    adminInput.style.visibility = "hidden";
     document.body.appendChild(adminInput);
 
     // Create Confirm Admin Login Button (Initially Hidden)
@@ -240,14 +240,14 @@ function setupAdminLogin() {
     confirmAdminButton.id = "confirmAdminButton";
     confirmAdminButton.innerText = "Confirm Admin Login";
     confirmAdminButton.classList.add("auth-button"); // Apply same styling
-    confirmAdminButton.style.display = "none";
+    confirmAdminButton.style.visibility = "hidden";
     document.body.appendChild(confirmAdminButton);
 
     // Event Listener for Admin Login Button
     adminButton.addEventListener("click", () => {
         if (localStorage.getItem("currentUser")) {
-            adminInput.style.display = "block";
-            confirmAdminButton.style.display = "block";
+            adminInput.style.visibility = "visible";
+            confirmAdminButton.style.visibility = "visible";
         } else {
             alert("You must log in normally first.");
         }
@@ -259,8 +259,8 @@ function setupAdminLogin() {
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
             adminButton.innerText = "Admin Logged In"; // Update button text
-            adminInput.style.display = "none";
-            confirmAdminButton.style.display = "none";
+            adminInput.style.visibility = "hidden";
+            confirmAdminButton.style.visibility = "hidden";
         } else {
             alert("Incorrect password.");
         }
