@@ -122,6 +122,26 @@ li:last-child {
     background-color: #C70039;
 }
 
+
+/* Apply same styling as sign-in button */
+.auth-button {
+    width: 170px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #FF5733;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.auth-button:hover {
+    background-color: #C70039;
+    transform: scale(1.05);
+}
+
 #adminPasswordInput {
     margin-top: 10px;
     padding: 5px;
