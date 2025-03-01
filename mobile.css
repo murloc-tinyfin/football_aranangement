@@ -130,3 +130,21 @@ body::-webkit-scrollbar {
     box-sizing: border-box;
 }
 
+#adminLoginButton,
+#confirmAdminButton {
+    margin-top: 10px;
+    background-color: #FF5733;
+}
+
+#adminLoginButton:hover,
+#confirmAdminButton:hover {
+    background-color: #C70039;
+}
+
+#adminPasswordInput {
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 16px;
+    display: none;
+}
+
