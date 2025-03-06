@@ -126,3 +126,8 @@ li:last-child {
     border-radius: 5px;
     display: none;
 }
+
+#nextSaturday {
+    font-size: 24px; /* Adjust size as needed */
+    font-weight: bold;
+}
