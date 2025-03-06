@@ -92,34 +92,37 @@ function removeUserFromLists() {
 function handleSignUp() {
     document.addEventListener("DOMContentLoaded", () => {
         const signUpButton = document.getElementById("signUpButton");
+        const signInModal = document.getElementById("signInModal");
+        const nameInput = document.getElementById("nameInput");
+        const submitName = document.getElementById("submitName");
 
-        // ✅ Run UI update on load to fix glitches
-        updateUI();
+        updateUI(); // Ensure UI updates on load
 
-        // ✅ Remove old event listeners before adding a new one
-        signUpButton.replaceWith(signUpButton.cloneNode(true));
-        const newSignUpButton = document.getElementById("signUpButton");
-
-        newSignUpButton.addEventListener("click", () => {
+        signUpButton.addEventListener("click", () => {
             if (localStorage.getItem("currentUser")) {
-                // ✅ User is signing out
                 removeUserFromLists().then(() => {
                     localStorage.removeItem("currentUser");
                     updateUI(true); // Reset UI after sign-out
                 }).catch(error => console.error("❌ Error signing out:", error));
             } else {
-                // ✅ User is signing in
-                const userName = prompt("Enter your name 输入你的名字").trim();
-                if (userName) {
-                    localStorage.setItem("currentUser", userName);
-                    updateUI(); // Refresh UI after sign-in
-                } else {
-                    alert("Name cannot be empty! 名字不能为空"); // Prevent empty names
-                }
+                signInModal.style.display = "block"; // Show the input box
+            }
+        });
+
+        submitName.addEventListener("click", () => {
+            const userName = nameInput.value.trim();
+            if (userName) {
+                localStorage.setItem("currentUser", userName);
+                updateUI();
+                signInModal.style.visibility = "hidden"; // Hide input box
+                nameInput.value = ""; // Clear input
+            } else {
+                alert("Name cannot be empty! 名字不能为空");
             }
         });
     });
 }
+
 
 
 
