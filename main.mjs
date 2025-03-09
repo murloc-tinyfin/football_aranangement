@@ -257,7 +257,8 @@ function setupAdminLogin() {
     adminInput.id = "adminPasswordInput";
     adminInput.type = "password";
     adminInput.placeholder = "Enter admin password";
-    adminInput.style.visibility = "hidden";
+    adminInput.style.visibility = "hidden"; 
+    adminInput.style.position = "absolute";  // Ensure it doesn't affect layout
     document.body.appendChild(adminInput);
 
     // Create Confirm Admin Login Button (Initially Hidden)
@@ -266,6 +267,7 @@ function setupAdminLogin() {
     confirmAdminButton.innerText = "Confirm Admin Login";
     confirmAdminButton.classList.add("auth-button");
     confirmAdminButton.style.visibility = "hidden";
+    confirmAdminButton.style.position = "absolute";  // Same fix
     document.body.appendChild(confirmAdminButton);
 
     // Create Admin Date Input Field (Hidden by Default)
@@ -275,13 +277,15 @@ function setupAdminLogin() {
     adminDateInput.style.visibility = "hidden";
     document.body.appendChild(adminDateInput);
 
-    // Show password input and confirm button when clicking "Admin Login"
+    // 🔹 Show password input and confirm button when clicking "Admin Login"
     adminButton.addEventListener("click", () => {
         adminInput.style.visibility = "visible";
+        adminInput.style.position = "static"; // Allow it to appear
         confirmAdminButton.style.visibility = "visible";
+        confirmAdminButton.style.position = "static"; 
     });
 
-    // Verify admin password and grant access
+    // 🔹 Verify admin password and grant access
     confirmAdminButton.addEventListener("click", () => {
         if (adminInput.value === "testpassword123") {
             localStorage.setItem("isAdmin", "true");
@@ -290,7 +294,9 @@ function setupAdminLogin() {
 
             // Hide login fields after successful login
             adminInput.style.visibility = "hidden";
+            adminInput.style.position = "absolute";
             confirmAdminButton.style.visibility = "hidden";
+            confirmAdminButton.style.position = "absolute";
 
             // Show date input for admins
             adminDateInput.style.visibility = "visible";
@@ -299,17 +305,18 @@ function setupAdminLogin() {
         }
     });
 
-    // Allow admin to change date in Firebase
+    // 🔹 Allow admin to change date in Firebase
     adminDateInput.addEventListener("change", () => {
         const newDate = adminDateInput.value;
         if (newDate) setAdminDate(newDate);
     });
 
-    // Show date input if admin is already logged in
+    // 🔹 Show date input if admin is already logged in
     if (localStorage.getItem("isAdmin") === "true") {
         adminDateInput.style.visibility = "visible";
     }
 }
+
 
 
 
