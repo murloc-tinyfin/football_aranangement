@@ -13,20 +13,42 @@ if (!window.db) {
 
 // ✅ Function to calculate and display the next Saturday (Keep this at the top)
 function getNextSaturdayLocal() {
+    listenForDateChanges(); // Listen for admin updates first
     let currentDate = new Date();
     let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7 || 7;
     let nextSaturday = new Date(currentDate);
     nextSaturday.setDate(currentDate.getDate() + daysUntilSaturday);
-
+    
     let formattedDate = `${nextSaturday.getFullYear()}/${
         String(nextSaturday.getMonth() + 1).padStart(2, '0')}/${
         String(nextSaturday.getDate()).padStart(2, '0')}`;
-
+    
     const element = document.getElementById("nextSaturday");
     if (element) {
         element.innerHTML = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
     }
 }
+
+
+function setAdminDate(newDate) {
+    const dateRef = ref(db, "eventDate");
+    set(dateRef, newDate)
+        .then(() => console.log("✅ Date updated in Firebase:", newDate))
+        .catch(error => console.error("❌ Error updating date:", error));
+}
+
+function listenForDateChanges() {
+    const dateRef = ref(db, "eventDate");
+    onValue(dateRef, (snapshot) => {
+        let newDate = snapshot.val();
+        if (newDate) {
+            document.getElementById("nextSaturday").innerHTML = `Next Event: ${newDate} <br> 下一个日期: ${newDate}`;
+        } else {
+            getNextSaturdayLocal();
+        }
+    });
+}
+
 
 // ✅ Call it when the page loads
 document.addEventListener("DOMContentLoaded", getNextSaturdayLocal);
@@ -268,6 +290,24 @@ function setupAdminLogin() {
             alert("Incorrect password.");
         }
     });
+
+    // Create Admin Date Input Field (Hidden by Default)
+    const adminDateInput = document.createElement("input");
+    adminDateInput.id = "adminDateInput";
+    adminDateInput.type = "date";
+    adminDateInput.style.display = "none";
+    document.body.appendChild(adminDateInput);
+
+    // Create Event Listener for Admin Date Change
+    adminDateInput.addEventListener("change", () => {
+        const newDate = adminDateInput.value;
+        if (newDate) setAdminDate(newDate);
+    });
+
+    // Show Date Input If Admin Logged In
+    if (localStorage.getItem("isAdmin") === "true") {
+        adminDateInput.style.display = "block";
+    }
 }
 
 
