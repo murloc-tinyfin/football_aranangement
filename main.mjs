@@ -278,9 +278,7 @@ function setupAdminLogin() {
     // Show password input when clicking "Admin Login"
     adminButton.addEventListener("click", () => {
         adminInput.style.visibility = "visible";
-        adminInput.style.display = "block";
-        confirmAdminButton.style.visibiilty = "visible";
-        confirmAdminButton.style.display = "block";
+        confirmAdminButton.style.visibilty = "visible";
     });
 
     // Verify admin password and grant access
