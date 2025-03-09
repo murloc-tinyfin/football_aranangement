@@ -9,7 +9,7 @@ if (!window.db) {
 }
 
 
-
+/*
 
 // ✅ Function to calculate and display the next Saturday (Keep this at the top)
 function getNextSaturdayLocal() {
@@ -29,14 +29,14 @@ function getNextSaturdayLocal() {
     }
 }
 
-
+*/
 function setAdminDate(newDate) {
     const dateRef = ref(db, "eventDate");
     set(dateRef, newDate)
         .then(() => console.log("✅ Date updated in Firebase:", newDate))
         .catch(error => console.error("❌ Error updating date:", error));
 }
-
+/*
 function listenForDateChanges() {
     const dateRef = ref(db, "eventDate");
     onValue(dateRef, (snapshot) => {
@@ -52,7 +52,7 @@ function listenForDateChanges() {
 
 // ✅ Call it when the page loads
 document.addEventListener("DOMContentLoaded", getNextSaturdayLocal);
-
+*/
 
 // ✅ Function to update all lists (Place this above `handleSignUp()`)
 function updateAllLists() {
@@ -403,7 +403,6 @@ function enableDateChange() {
 // ✅ Initialize Functions
 handleSignUp();
 setupButtonToggles();
-getNextSaturdayLocal();
 setupAdminLogin();
 loadGlobalDate();
 checkAndResetDate();
