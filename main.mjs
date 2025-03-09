@@ -265,7 +265,7 @@ function setupAdminLogin() {
     confirmAdminButton.id = "confirmAdminButton";
     confirmAdminButton.innerText = "Confirm Admin Login";
     confirmAdminButton.classList.add("auth-button");
-    confirmAdminButton.style.display = "none";
+    confirmAdminButton.style.visibility = "hidden";
     document.body.appendChild(confirmAdminButton);
 
     // Create Admin Date Input Field (Hidden by Default)
@@ -277,8 +277,8 @@ function setupAdminLogin() {
 
     // Show password input when clicking "Admin Login"
     adminButton.addEventListener("click", () => {
-        adminInput.style.display = "block";
-        confirmAdminButton.style.display = "block";
+        adminInput.style.visibility = "visible";
+        confirmAdminButton.style.visibiilty = "visible";
     });
 
     // Verify admin password and grant access
@@ -289,11 +289,11 @@ function setupAdminLogin() {
             adminButton.innerText = "Admin Logged In";
 
             // Hide login fields after successful login
-            adminInput.style.display = "none";
+            adminInput.style.visibility = "hidden";
             confirmAdminButton.style.visibility = "hidden";
 
             // Show date input for admins
-            adminDateInput.style.display = "block";
+            adminDateInput.style.visibility = "visible";
         } else {
             alert("Incorrect password.");
         }
@@ -307,7 +307,7 @@ function setupAdminLogin() {
 
     // Show date input if admin is already logged in
     if (localStorage.getItem("isAdmin") === "true") {
-        adminDateInput.style.display = "block";
+        adminDateInput.style.visibility = "visible";
     }
 }
 
