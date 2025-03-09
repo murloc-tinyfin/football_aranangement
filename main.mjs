@@ -257,7 +257,7 @@ function setupAdminLogin() {
     adminInput.id = "adminPasswordInput";
     adminInput.type = "password";
     adminInput.placeholder = "Enter admin password";
-    adminInput.style.display = "none";
+    adminInput.style.visibility = "hidden";
     document.body.appendChild(adminInput);
 
     // Create Confirm Admin Login Button (Initially Hidden)
@@ -272,7 +272,7 @@ function setupAdminLogin() {
     const adminDateInput = document.createElement("input");
     adminDateInput.id = "adminDateInput";
     adminDateInput.type = "date";
-    adminDateInput.style.display = "none";
+    adminDateInput.style.visibility = "hidden";
     document.body.appendChild(adminDateInput);
 
     // Show password input when clicking "Admin Login"
@@ -290,7 +290,7 @@ function setupAdminLogin() {
 
             // Hide login fields after successful login
             adminInput.style.display = "none";
-            confirmAdminButton.style.display = "none";
+            confirmAdminButton.style.visibility = "hidden";
 
             // Show date input for admins
             adminDateInput.style.display = "block";
