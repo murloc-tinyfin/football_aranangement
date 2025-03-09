@@ -275,10 +275,10 @@ function setupAdminLogin() {
     adminDateInput.style.visibility = "hidden";
     document.body.appendChild(adminDateInput);
 
-    // Show password input when clicking "Admin Login"
+    // Show password input and confirm button when clicking "Admin Login"
     adminButton.addEventListener("click", () => {
         adminInput.style.visibility = "visible";
-        confirmAdminButton.style.visibilty = "visible";
+        confirmAdminButton.style.visibility = "visible";
     });
 
     // Verify admin password and grant access
@@ -310,6 +310,7 @@ function setupAdminLogin() {
         adminDateInput.style.visibility = "visible";
     }
 }
+
 
 
 
