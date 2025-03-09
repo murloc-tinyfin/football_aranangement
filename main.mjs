@@ -245,77 +245,72 @@ function setupButtonToggles() {
 }
 
 function setupAdminLogin() {
-    // Create Admin Login Button
-    const adminButton = document.createElement("button");
-    adminButton.id = "adminLoginButton";
-    adminButton.innerText = localStorage.getItem("isAdmin") ? "Admin Logged In" : "Admin Login";
-    adminButton.classList.add("auth-button");
-    document.body.appendChild(adminButton);
+    // Get or create Admin Login Button
+    let adminButton = document.getElementById("adminLoginButton");
+    if (!adminButton) {
+        adminButton = document.createElement("button");
+        adminButton.id = "adminLoginButton";
+        adminButton.innerText = localStorage.getItem("isAdmin") ? "Admin Logged In" : "Admin Login";
+        adminButton.classList.add("auth-button"); // Apply same styling as Sign In button
+        document.body.appendChild(adminButton);
+    }
 
-    // Create Admin Password Input (Initially Hidden)
-    const adminInput = document.createElement("input");
-    adminInput.id = "adminPasswordInput";
-    adminInput.type = "password";
-    adminInput.placeholder = "Enter admin password";
-    adminInput.style.visibility = "hidden"; 
-    adminInput.style.position = "absolute";  // Ensure it doesn't affect layout
-    document.body.appendChild(adminInput);
+    // Get or create Admin Password Input (Initially Hidden)
+    let adminInput = document.getElementById("adminPasswordInput");
+    if (!adminInput) {
+        adminInput = document.createElement("input");
+        adminInput.id = "adminPasswordInput";
+        adminInput.type = "password";
+        adminInput.placeholder = "Enter admin password";
+        adminInput.style.visibility = "hidden";
+        adminInput.style.opacity = "0";
+        adminInput.style.pointerEvents = "none"; // Disable interactions when hidden
+        document.body.appendChild(adminInput);
+    }
 
-    // Create Confirm Admin Login Button (Initially Hidden)
-    const confirmAdminButton = document.createElement("button");
-    confirmAdminButton.id = "confirmAdminButton";
-    confirmAdminButton.innerText = "Confirm Admin Login";
-    confirmAdminButton.classList.add("auth-button");
-    confirmAdminButton.style.visibility = "hidden";
-    confirmAdminButton.style.position = "absolute";  // Same fix
-    document.body.appendChild(confirmAdminButton);
+    // Get or create Confirm Admin Login Button (Initially Hidden)
+    let confirmAdminButton = document.getElementById("confirmAdminButton");
+    if (!confirmAdminButton) {
+        confirmAdminButton = document.createElement("button");
+        confirmAdminButton.id = "confirmAdminButton";
+        confirmAdminButton.innerText = "Confirm Admin Login";
+        confirmAdminButton.classList.add("auth-button"); // Apply same styling
+        confirmAdminButton.style.visibility = "hidden";
+        confirmAdminButton.style.opacity = "0";
+        confirmAdminButton.style.pointerEvents = "none"; // Disable interactions when hidden
+        document.body.appendChild(confirmAdminButton);
+    }
 
-    // Create Admin Date Input Field (Hidden by Default)
-    const adminDateInput = document.createElement("input");
-    adminDateInput.id = "adminDateInput";
-    adminDateInput.type = "date";
-    adminDateInput.style.visibility = "hidden";
-    document.body.appendChild(adminDateInput);
-
-    // 🔹 Show password input and confirm button when clicking "Admin Login"
+    // Event Listener for Admin Login Button
     adminButton.addEventListener("click", () => {
         adminInput.style.visibility = "visible";
-        adminInput.style.position = "static"; // Allow it to appear
+        adminInput.style.opacity = "1";
+        adminInput.style.pointerEvents = "auto"; // Enable interactions
         confirmAdminButton.style.visibility = "visible";
-        confirmAdminButton.style.position = "static"; 
+        confirmAdminButton.style.opacity = "1";
+        confirmAdminButton.style.pointerEvents = "auto"; // Enable interactions
     });
 
-    // 🔹 Verify admin password and grant access
+    // Event Listener for Confirming Admin Login
     confirmAdminButton.addEventListener("click", () => {
-        if (adminInput.value === "testpassword123") {
+        if (adminInput.value === "testpassword123") { // Change this to your actual admin password
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
-            adminButton.innerText = "Admin Logged In";
-
-            // Hide login fields after successful login
+            adminButton.innerText = "Admin Logged In"; // Update button text
+            
+            // Hide input fields after successful login
             adminInput.style.visibility = "hidden";
-            adminInput.style.position = "absolute";
+            adminInput.style.opacity = "0";
+            adminInput.style.pointerEvents = "none";
             confirmAdminButton.style.visibility = "hidden";
-            confirmAdminButton.style.position = "absolute";
-
-            // Show date input for admins
-            adminDateInput.style.visibility = "visible";
+            confirmAdminButton.style.opacity = "0";
+            confirmAdminButton.style.pointerEvents = "none";
         } else {
             alert("Incorrect password.");
         }
     });
-
-    // 🔹 Allow admin to change date in Firebase
-    adminDateInput.addEventListener("change", () => {
-        const newDate = adminDateInput.value;
-        if (newDate) setAdminDate(newDate);
-    });
-
-    // 🔹 Show date input if admin is already logged in
-    if (localStorage.getItem("isAdmin") === "true") {
-        adminDateInput.style.visibility = "visible";
-    }
 }
+
 
 
 
