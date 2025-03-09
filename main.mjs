@@ -276,7 +276,56 @@ function setupAdminLogin() {
     }
 }
 
-// ✅ Function to allow the admin to change the date
+
+
+// ✅ Function to automatically set next Saturday and reset teams
+function checkAndResetDate() {
+    let savedDate = localStorage.getItem("nextSaturday");
+    let currentDate = new Date();
+    let today = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${String(currentDate.getDate()).padStart(2, '0')}`;
+
+    // If no date is set or the saved date has passed, reset it to the next Saturday
+    if (!savedDate || today >= savedDate) {
+        let nextSaturday = getNextSaturday();
+        localStorage.setItem("nextSaturday", nextSaturday);
+        document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
+        resetTeams(); // ✅ Automatically reset teams when a new date is set
+    }
+}
+
+// ✅ Function to get the next Saturday's date
+function getNextSaturday() {
+    let currentDate = new Date();
+    let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7 || 7;
+    let nextSaturday = new Date(currentDate);
+    nextSaturday.setDate(currentDate.getDate() + daysUntilSaturday);
+    return `${nextSaturday.getFullYear()}/${String(nextSaturday.getMonth() + 1).padStart(2, '0')}/${String(nextSaturday.getDate()).padStart(2, '0')}`;
+}
+
+// ✅ Function to reset all teams
+function resetTeams() {
+    localStorage.removeItem("teams"); // Clears locally stored team data (if used)
+    
+    // ✅ Reset Firebase teams if using Firebase
+    const db = window.db;
+    if (db) {
+        const teamsRef = ref(db, "teams");
+        set(teamsRef, { list1: [], list2: [], list3: [] })
+            .then(() => {
+                console.log("✅ Teams have been reset!");
+                alert("All teams have been cleared for the new date!");
+                updateAllLists(); // Refresh UI
+            })
+            .catch(error => console.error("❌ Firebase reset error:", error));
+    }
+
+    // ✅ Clear UI lists immediately
+    document.getElementById("list1").innerHTML = "";
+    document.getElementById("list2").innerHTML = "";
+    document.getElementById("list3").innerHTML = "";
+}
+
+// ✅ Update enableDateChange to auto-check and reset date
 function enableDateChange() {
     let dateElement = document.getElementById("nextSaturday");
     if (!dateElement) {
@@ -303,6 +352,7 @@ function enableDateChange() {
             if (isValidDate) {
                 dateElement.innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
                 localStorage.setItem("nextSaturday", newDate); // Save date persistently
+                resetTeams(); // ✅ Reset teams on date change
                 alert("Date updated successfully!");
             } else {
                 alert("Invalid date format. Use YYYY/MM/DD.");
@@ -315,8 +365,10 @@ function enableDateChange() {
     if (savedDate) {
         dateElement.innerHTML = `Next Saturday: ${savedDate} <br> 下一个周六: ${savedDate}`;
     }
-}
 
+    // ✅ Auto-reset teams if the saved date has passed
+    checkAndResetDate();
+}
 
 // ✅ Initialize Functions
 handleSignUp();
