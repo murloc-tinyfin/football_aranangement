@@ -341,6 +341,8 @@ function resetTeams() {
     document.getElementById("list2").innerHTML = "";
     document.getElementById("list3").innerHTML = "";
 }
+
+// ✅ Function to allow the admin to change the date (Now Global)
 function enableDateChange() {
     let dateElement = document.getElementById("nextSaturday");
     if (!dateElement) {
@@ -365,13 +367,28 @@ function enableDateChange() {
         if (newDate) {
             let isValidDate = /^\d{4}\/\d{2}\/\d{2}$/.test(newDate);
             if (isValidDate) {
-                set(ref(db, "globalDate"), newDate) // 🔹 Save to Firebase (Global)
-                    .then(() => {
-                        document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-                        resetTeams(); // ✅ Reset teams globally when date changes
-                        alert("Date updated successfully for everyone!");
-                    })
-                    .catch(error => console.error("❌ Error updating global date:", error));
+                get(ref(db, "globalDate")).then(snapshot => {
+                    let savedDate = snapshot.val();
+
+                    if (!savedDate || newDate > savedDate) {
+                        // ✅ Only reset teams if the new date is **AFTER** the saved date
+                        set(ref(db, "globalDate"), newDate)
+                            .then(() => {
+                                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+                                resetTeams(); // ✅ Only reset if the date moves forward
+                                alert("Date updated successfully for everyone!");
+                            })
+                            .catch(error => console.error("❌ Error updating global date:", error));
+                    } else {
+                        // ✅ Just update the date without clearing teams
+                        set(ref(db, "globalDate"), newDate)
+                            .then(() => {
+                                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+                                alert("Date updated successfully!");
+                            })
+                            .catch(error => console.error("❌ Error updating global date:", error));
+                    }
+                });
             } else {
                 alert("Invalid date format. Use YYYY/MM/DD.");
             }
@@ -381,6 +398,7 @@ function enableDateChange() {
     // ✅ Load the current global date when enabling
     loadGlobalDate();
 }
+
 
 // ✅ Initialize Functions
 handleSignUp();
