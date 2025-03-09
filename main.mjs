@@ -264,11 +264,50 @@ function setupAdminLogin() {
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
             adminButton.innerText = "Admin Logged In"; // Update button text
+            enableDateChange(); // Allow admin to change date
         } else {
             alert("Incorrect password.");
         }
     });
 }
+
+// ✅ Function to enable the admin to change the date
+function enableDateChange() {
+    let dateElement = document.getElementById("nextSaturday");
+    if (!dateElement) {
+        console.error("❌ Date element not found!");
+        return;
+    }
+
+    // Add a button for changing the date (if not already present)
+    let changeDateButton = document.getElementById("changeDateButton");
+    if (!changeDateButton) {
+        changeDateButton = document.createElement("button");
+        changeDateButton.id = "changeDateButton";
+        changeDateButton.innerText = "Change Date";
+        changeDateButton.classList.add("auth-button");
+        changeDateButton.style.marginTop = "10px";
+        document.body.appendChild(changeDateButton);
+    }
+
+    // Event Listener for Changing the Date
+    changeDateButton.addEventListener("click", () => {
+        let newDate = prompt("Enter the new date (YYYY/MM/DD):");
+        if (newDate) {
+            let isValidDate = /^\d{4}\/\d{2}\/\d{2}$/.test(newDate);
+            if (isValidDate) {
+                dateElement.innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+                alert("Date updated successfully!");
+            } else {
+                alert("Invalid date format. Use YYYY/MM/DD.");
+            }
+        }
+    });
+}
+
+// ✅ Initialize admin login function
+setupAdminLogin();
+
 
 
 
