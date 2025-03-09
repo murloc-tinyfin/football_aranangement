@@ -251,7 +251,7 @@ function setupAdminLogin() {
         adminButton = document.createElement("button");
         adminButton.id = "adminLoginButton";
         adminButton.innerText = localStorage.getItem("isAdmin") ? "Admin Logged In" : "Admin Login";
-        adminButton.classList.add("auth-button"); // Apply the same styling as Sign In button
+        adminButton.classList.add("auth-button");
         document.body.appendChild(adminButton);
     }
 
@@ -263,15 +263,20 @@ function setupAdminLogin() {
         if (password === "testpassword123") { // Change this to your actual admin password
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
-            adminButton.innerText = "Admin Logged In"; // Update button text
-            enableDateChange(); // Allow admin to change date
+            adminButton.innerText = "Admin Logged In";
+            enableDateChange(); // Enable date change function
         } else {
             alert("Incorrect password.");
         }
     });
+
+    // ✅ If already logged in, enable the date change function on page load
+    if (localStorage.getItem("isAdmin") === "true") {
+        enableDateChange();
+    }
 }
 
-// ✅ Function to enable the admin to change the date
+// ✅ Function to allow the admin to change the date
 function enableDateChange() {
     let dateElement = document.getElementById("nextSaturday");
     if (!dateElement) {
@@ -297,19 +302,20 @@ function enableDateChange() {
             let isValidDate = /^\d{4}\/\d{2}\/\d{2}$/.test(newDate);
             if (isValidDate) {
                 dateElement.innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+                localStorage.setItem("nextSaturday", newDate); // Save date persistently
                 alert("Date updated successfully!");
             } else {
                 alert("Invalid date format. Use YYYY/MM/DD.");
             }
         }
     });
+
+    // ✅ Restore the saved date on page reload
+    let savedDate = localStorage.getItem("nextSaturday");
+    if (savedDate) {
+        dateElement.innerHTML = `Next Saturday: ${savedDate} <br> 下一个周六: ${savedDate}`;
+    }
 }
-
-// ✅ Initialize admin login function
-setupAdminLogin();
-
-
-
 
 
 // ✅ Initialize Functions
