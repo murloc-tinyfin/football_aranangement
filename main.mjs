@@ -276,21 +276,43 @@ function setupAdminLogin() {
     }
 }
 
+// ✅ Function to get the global date from Firebase
+function loadGlobalDate() {
+    const dateRef = ref(db, "globalDate");
+    get(dateRef).then(snapshot => {
+        let savedDate = snapshot.val();
+        if (savedDate) {
+            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${savedDate} <br> 下一个周六: ${savedDate}`;
+        } else {
+            setNextSaturdayInFirebase(); // Initialize if missing
+        }
+    });
+}
 
+function setNextSaturdayInFirebase() {
+    let nextSaturday = getNextSaturday();
+    set(ref(db, "globalDate"), nextSaturday)
+        .then(() => {
+            console.log("✅ Next Saturday date set globally:", nextSaturday);
+            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
+        })
+        .catch(error => console.error("❌ Error setting global date:", error));
+}
 
 // ✅ Function to automatically set next Saturday and reset teams
 function checkAndResetDate() {
-    let savedDate = localStorage.getItem("nextSaturday");
-    let currentDate = new Date();
-    let today = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${String(currentDate.getDate()).padStart(2, '0')}`;
+    const dateRef = ref(db, "globalDate");
+    get(dateRef).then(snapshot => {
+        let savedDate = snapshot.val();
+        let currentDate = new Date();
+        let today = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${String(currentDate.getDate()).padStart(2, '0')}`;
 
-    // If no date is set or the saved date has passed, reset it to the next Saturday
-    if (!savedDate || today >= savedDate) {
-        let nextSaturday = getNextSaturday();
-        localStorage.setItem("nextSaturday", nextSaturday);
-        document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
-        resetTeams(); // ✅ Automatically reset teams when a new date is set
-    }
+        // If no date is set or the saved date has passed, reset it
+        if (!savedDate || today >= savedDate) {
+            setNextSaturdayInFirebase();
+            resetTeams();
+        }
+    });
 }
 
 // ✅ Function to get the next Saturday's date
@@ -302,30 +324,23 @@ function getNextSaturday() {
     return `${nextSaturday.getFullYear()}/${String(nextSaturday.getMonth() + 1).padStart(2, '0')}/${String(nextSaturday.getDate()).padStart(2, '0')}`;
 }
 
+
 // ✅ Function to reset all teams
 function resetTeams() {
-    localStorage.removeItem("teams"); // Clears locally stored team data (if used)
-    
-    // ✅ Reset Firebase teams if using Firebase
-    const db = window.db;
-    if (db) {
-        const teamsRef = ref(db, "teams");
-        set(teamsRef, { list1: [], list2: [], list3: [] })
-            .then(() => {
-                console.log("✅ Teams have been reset!");
-                alert("All teams have been cleared for the new date!");
-                updateAllLists(); // Refresh UI
-            })
-            .catch(error => console.error("❌ Firebase reset error:", error));
-    }
+    const teamsRef = ref(db, "teams");
+    set(teamsRef, { list1: [], list2: [], list3: [] })
+        .then(() => {
+            console.log("✅ Teams have been reset globally!");
+            alert("All teams have been cleared for the new date!");
+            updateAllLists(); // Refresh UI
+        })
+        .catch(error => console.error("❌ Firebase reset error:", error));
 
     // ✅ Clear UI lists immediately
     document.getElementById("list1").innerHTML = "";
     document.getElementById("list2").innerHTML = "";
     document.getElementById("list3").innerHTML = "";
 }
-
-// ✅ Update enableDateChange to auto-check and reset date
 function enableDateChange() {
     let dateElement = document.getElementById("nextSaturday");
     if (!dateElement) {
@@ -350,24 +365,21 @@ function enableDateChange() {
         if (newDate) {
             let isValidDate = /^\d{4}\/\d{2}\/\d{2}$/.test(newDate);
             if (isValidDate) {
-                dateElement.innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-                localStorage.setItem("nextSaturday", newDate); // Save date persistently
-                resetTeams(); // ✅ Reset teams on date change
-                alert("Date updated successfully!");
+                set(ref(db, "globalDate"), newDate) // 🔹 Save to Firebase (Global)
+                    .then(() => {
+                        document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+                        resetTeams(); // ✅ Reset teams globally when date changes
+                        alert("Date updated successfully for everyone!");
+                    })
+                    .catch(error => console.error("❌ Error updating global date:", error));
             } else {
                 alert("Invalid date format. Use YYYY/MM/DD.");
             }
         }
     });
 
-    // ✅ Restore the saved date on page reload
-    let savedDate = localStorage.getItem("nextSaturday");
-    if (savedDate) {
-        dateElement.innerHTML = `Next Saturday: ${savedDate} <br> 下一个周六: ${savedDate}`;
-    }
-
-    // ✅ Auto-reset teams if the saved date has passed
-    checkAndResetDate();
+    // ✅ Load the current global date when enabling
+    loadGlobalDate();
 }
 
 // ✅ Initialize Functions
@@ -375,3 +387,5 @@ handleSignUp();
 setupButtonToggles();
 getNextSaturdayLocal();
 setupAdminLogin();
+loadGlobalDate();
+checkAndResetDate();
