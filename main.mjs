@@ -265,6 +265,7 @@ function setupAdminLogin() {
         adminInput.style.visibility = "hidden";
         adminInput.style.opacity = "0";
         adminInput.style.pointerEvents = "none"; // Disable interactions when hidden
+        adminInput.style.transition = "opacity 0.3s ease-in-out";
         document.body.appendChild(adminInput);
     }
 
@@ -278,20 +279,22 @@ function setupAdminLogin() {
         confirmAdminButton.style.visibility = "hidden";
         confirmAdminButton.style.opacity = "0";
         confirmAdminButton.style.pointerEvents = "none"; // Disable interactions when hidden
+        confirmAdminButton.style.transition = "opacity 0.3s ease-in-out";
         document.body.appendChild(confirmAdminButton);
     }
 
-    // Event Listener for Admin Login Button
+    // 🔹 Event Listener for Admin Login Button (SHOW input & confirm button)
     adminButton.addEventListener("click", () => {
         adminInput.style.visibility = "visible";
         adminInput.style.opacity = "1";
         adminInput.style.pointerEvents = "auto"; // Enable interactions
+
         confirmAdminButton.style.visibility = "visible";
         confirmAdminButton.style.opacity = "1";
         confirmAdminButton.style.pointerEvents = "auto"; // Enable interactions
     });
 
-    // Event Listener for Confirming Admin Login
+    // 🔹 Event Listener for Confirming Admin Login
     confirmAdminButton.addEventListener("click", () => {
         if (adminInput.value === "testpassword123") { // Change this to your actual admin password
             localStorage.setItem("isAdmin", "true");
@@ -302,19 +305,17 @@ function setupAdminLogin() {
             adminInput.style.visibility = "hidden";
             adminInput.style.opacity = "0";
             adminInput.style.pointerEvents = "none";
+
             confirmAdminButton.style.visibility = "hidden";
             confirmAdminButton.style.opacity = "0";
             confirmAdminButton.style.pointerEvents = "none";
+
+            adminInput.value = ""; // Clear the password field after login
         } else {
             alert("Incorrect password.");
         }
     });
 }
-
-
-
-
-
 
 
 // ✅ Initialize Functions
