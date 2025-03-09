@@ -380,7 +380,7 @@ function enableDateChange() {
 
                         let storedDatePlusOneStr = `${storedDateObj.getFullYear()}/${String(storedDateObj.getMonth() + 1).padStart(2, '0')}/${String(storedDateObj.getDate()).padStart(2, '0')}`;
 
-                        if (todayStr > storedDatePlusOneStr) {
+                        if (todayStr < storedDatePlusOneStr) {
                             // ✅ Only reset teams if today is later than storedDate +1 day
                             resetTeams();
                         }
