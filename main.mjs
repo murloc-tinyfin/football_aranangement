@@ -300,20 +300,38 @@ function setNextSaturdayInFirebase() {
 }
 
 // ✅ Function to automatically set next Saturday and reset teams
+// ✅ Function to check and reset the date and teams if needed
 function checkAndResetDate() {
-    const dateRef = ref(db, "globalDate");
-    get(dateRef).then(snapshot => {
+    get(ref(db, "globalDate")).then(snapshot => {
         let savedDate = snapshot.val();
-        let currentDate = new Date();
-        let today = `${currentDate.getFullYear()}/${String(currentDate.getMonth() + 1).padStart(2, '0')}/${String(currentDate.getDate()).padStart(2, '0')}`;
+        let today = new Date();
+        let todayStr = formatDate(today); // Format today's date
 
-        // If no date is set or the saved date has passed, reset it
-        if (!savedDate || today >= savedDate) {
-            setNextSaturdayInFirebase();
-            resetTeams();
+        if (!savedDate) {
+            // ✅ No date set, initialize to next Saturday
+            let nextSaturday = getNextSaturday();
+            set(ref(db, "globalDate"), nextSaturday);
+            return;
+        }
+
+        let storedDateObj = new Date(savedDate);
+        storedDateObj.setDate(storedDateObj.getDate() + 1); // ✅ Add 1 day to the stored date
+        let storedDatePlusOneStr = formatDate(storedDateObj); // Format for comparison
+
+        if (todayStr >= storedDatePlusOneStr) {
+            // ✅ Reset teams and update date to next Saturday in a single condition
+            let nextSaturday = getNextSaturday();
+            set(ref(db, "globalDate"), nextSaturday)
+                .then(() => {
+                    document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
+                    resetTeams();
+                    console.log("✅ Date reset to next Saturday & teams cleared:", nextSaturday);
+                })
+                .catch(error => console.error("❌ Error resetting global date:", error));
         }
     });
 }
+
 
 // ✅ Function to get the next Saturday's date
 function getNextSaturday() {
@@ -380,10 +398,7 @@ function enableDateChange() {
 
                         let storedDatePlusOneStr = `${storedDateObj.getFullYear()}/${String(storedDateObj.getMonth() + 1).padStart(2, '0')}/${String(storedDateObj.getDate()).padStart(2, '0')}`;
 
-                        if (todayStr < storedDatePlusOneStr) {
-                            // ✅ Only reset teams if today is later than storedDate +1 day
-                            resetTeams();
-                        }
+                        checkAndResetDate();
 
                         // ✅ Always update the new date in Firebase
                         set(ref(db, "globalDate"), newDate)
