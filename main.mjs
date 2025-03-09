@@ -251,71 +251,93 @@ function setupAdminLogin() {
         adminButton = document.createElement("button");
         adminButton.id = "adminLoginButton";
         adminButton.innerText = localStorage.getItem("isAdmin") ? "Admin Logged In" : "Admin Login";
-        adminButton.classList.add("auth-button"); // Apply same styling as Sign In button
+        adminButton.classList.add("auth-button"); // Apply the same styling as Sign In button
         document.body.appendChild(adminButton);
     }
 
-    // Get or create Admin Password Input (Initially Hidden)
-    let adminInput = document.getElementById("adminPasswordInput");
-    if (!adminInput) {
-        adminInput = document.createElement("input");
+    // Event Listener for Admin Login Button (Create input dynamically)
+    adminButton.addEventListener("click", () => {
+        if (document.getElementById("adminModal")) return; // Prevent duplicates
+
+        // Create a modal container
+        let modal = document.createElement("div");
+        modal.id = "adminModal";
+        modal.style.position = "fixed";
+        modal.style.top = "50%";
+        modal.style.left = "50%";
+        modal.style.transform = "translate(-50%, -50%)";
+        modal.style.background = "white";
+        modal.style.padding = "20px";
+        modal.style.borderRadius = "10px";
+        modal.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
+        modal.style.textAlign = "center";
+        modal.style.zIndex = "1000";
+
+        // Create input field
+        let adminInput = document.createElement("input");
         adminInput.id = "adminPasswordInput";
         adminInput.type = "password";
         adminInput.placeholder = "Enter admin password";
-        adminInput.style.visibility = "hidden";
-        adminInput.style.opacity = "0";
-        adminInput.style.pointerEvents = "none"; // Disable interactions when hidden
-        adminInput.style.transition = "opacity 0.3s ease-in-out";
-        document.body.appendChild(adminInput);
-    }
+        adminInput.style.padding = "10px";
+        adminInput.style.fontSize = "16px";
+        adminInput.style.width = "80%";
+        adminInput.style.border = "1px solid #ccc";
+        adminInput.style.borderRadius = "5px";
+        modal.appendChild(adminInput);
 
-    // Get or create Confirm Admin Login Button (Initially Hidden)
-    let confirmAdminButton = document.getElementById("confirmAdminButton");
-    if (!confirmAdminButton) {
-        confirmAdminButton = document.createElement("button");
+        // Line break
+        modal.appendChild(document.createElement("br"));
+        modal.appendChild(document.createElement("br"));
+
+        // Create Confirm Button
+        let confirmAdminButton = document.createElement("button");
         confirmAdminButton.id = "confirmAdminButton";
         confirmAdminButton.innerText = "Confirm Admin Login";
         confirmAdminButton.classList.add("auth-button"); // Apply same styling
-        confirmAdminButton.style.visibility = "hidden";
-        confirmAdminButton.style.opacity = "0";
-        confirmAdminButton.style.pointerEvents = "none"; // Disable interactions when hidden
-        confirmAdminButton.style.transition = "opacity 0.3s ease-in-out";
-        document.body.appendChild(confirmAdminButton);
-    }
+        confirmAdminButton.style.padding = "10px 20px";
+        confirmAdminButton.style.border = "none";
+        confirmAdminButton.style.borderRadius = "5px";
+        confirmAdminButton.style.backgroundColor = "#007BFF";
+        confirmAdminButton.style.color = "white";
+        confirmAdminButton.style.cursor = "pointer";
+        confirmAdminButton.style.marginTop = "10px";
+        modal.appendChild(confirmAdminButton);
 
-    // 🔹 Event Listener for Admin Login Button (SHOW input & confirm button)
-    adminButton.addEventListener("click", () => {
-        adminInput.style.visibility = "visible";
-        adminInput.style.opacity = "1";
-        adminInput.style.pointerEvents = "auto"; // Enable interactions
+        // Create Close Button
+        let closeButton = document.createElement("button");
+        closeButton.innerText = "Cancel";
+        closeButton.style.marginLeft = "10px";
+        closeButton.style.padding = "10px 20px";
+        closeButton.style.border = "none";
+        closeButton.style.borderRadius = "5px";
+        closeButton.style.backgroundColor = "#FF7043";
+        closeButton.style.color = "white";
+        closeButton.style.cursor = "pointer";
+        closeButton.style.marginTop = "10px";
+        modal.appendChild(closeButton);
 
-        confirmAdminButton.style.visibility = "visible";
-        confirmAdminButton.style.opacity = "1";
-        confirmAdminButton.style.pointerEvents = "auto"; // Enable interactions
-    });
+        // Append modal to body
+        document.body.appendChild(modal);
 
-    // 🔹 Event Listener for Confirming Admin Login
-    confirmAdminButton.addEventListener("click", () => {
-        if (adminInput.value === "testpassword123") { // Change this to your actual admin password
-            localStorage.setItem("isAdmin", "true");
-            alert("Admin access granted.");
-            adminButton.innerText = "Admin Logged In"; // Update button text
-            
-            // Hide input fields after successful login
-            adminInput.style.visibility = "hidden";
-            adminInput.style.opacity = "0";
-            adminInput.style.pointerEvents = "none";
+        // Event Listener for Confirming Admin Login
+        confirmAdminButton.addEventListener("click", () => {
+            if (adminInput.value === "testpassword123") { // Change this to your actual admin password
+                localStorage.setItem("isAdmin", "true");
+                alert("Admin access granted.");
+                adminButton.innerText = "Admin Logged In"; // Update button text
+                document.body.removeChild(modal); // Remove modal after login
+            } else {
+                alert("Incorrect password.");
+            }
+        });
 
-            confirmAdminButton.style.visibility = "hidden";
-            confirmAdminButton.style.opacity = "0";
-            confirmAdminButton.style.pointerEvents = "none";
-
-            adminInput.value = ""; // Clear the password field after login
-        } else {
-            alert("Incorrect password.");
-        }
+        // Event Listener for Close Button
+        closeButton.addEventListener("click", () => {
+            document.body.removeChild(modal); // Remove modal without login
+        });
     });
 }
+
 
 
 // ✅ Initialize Functions
