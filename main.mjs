@@ -255,88 +255,21 @@ function setupAdminLogin() {
         document.body.appendChild(adminButton);
     }
 
-    // Event Listener for Admin Login Button (Create input dynamically)
+    // Event Listener for Admin Login Button
     adminButton.addEventListener("click", () => {
-        if (document.getElementById("adminModal")) return; // Prevent duplicates
+        let password = prompt("Enter admin password:");
+        if (password === null) return; // User canceled input
 
-        // Create a modal container
-        let modal = document.createElement("div");
-        modal.id = "adminModal";
-        modal.style.position = "fixed";
-        modal.style.top = "50%";
-        modal.style.left = "50%";
-        modal.style.transform = "translate(-50%, -50%)";
-        modal.style.background = "white";
-        modal.style.padding = "20px";
-        modal.style.borderRadius = "10px";
-        modal.style.boxShadow = "0px 4px 6px rgba(0, 0, 0, 0.1)";
-        modal.style.textAlign = "center";
-        modal.style.zIndex = "1000";
-
-        // Create input field
-        let adminInput = document.createElement("input");
-        adminInput.id = "adminPasswordInput";
-        adminInput.type = "password";
-        adminInput.placeholder = "Enter admin password";
-        adminInput.style.padding = "10px";
-        adminInput.style.fontSize = "16px";
-        adminInput.style.width = "80%";
-        adminInput.style.border = "1px solid #ccc";
-        adminInput.style.borderRadius = "5px";
-        modal.appendChild(adminInput);
-
-        // Line break
-        modal.appendChild(document.createElement("br"));
-        modal.appendChild(document.createElement("br"));
-
-        // Create Confirm Button
-        let confirmAdminButton = document.createElement("button");
-        confirmAdminButton.id = "confirmAdminButton";
-        confirmAdminButton.innerText = "Confirm Admin Login";
-        confirmAdminButton.classList.add("auth-button"); // Apply same styling
-        confirmAdminButton.style.padding = "10px 20px";
-        confirmAdminButton.style.border = "none";
-        confirmAdminButton.style.borderRadius = "5px";
-        confirmAdminButton.style.backgroundColor = "#007BFF";
-        confirmAdminButton.style.color = "white";
-        confirmAdminButton.style.cursor = "pointer";
-        confirmAdminButton.style.marginTop = "10px";
-        modal.appendChild(confirmAdminButton);
-
-        // Create Close Button
-        let closeButton = document.createElement("button");
-        closeButton.innerText = "Cancel";
-        closeButton.style.marginLeft = "10px";
-        closeButton.style.padding = "10px 20px";
-        closeButton.style.border = "none";
-        closeButton.style.borderRadius = "5px";
-        closeButton.style.backgroundColor = "#FF7043";
-        closeButton.style.color = "white";
-        closeButton.style.cursor = "pointer";
-        closeButton.style.marginTop = "10px";
-        modal.appendChild(closeButton);
-
-        // Append modal to body
-        document.body.appendChild(modal);
-
-        // Event Listener for Confirming Admin Login
-        confirmAdminButton.addEventListener("click", () => {
-            if (adminInput.value === "testpassword123") { // Change this to your actual admin password
-                localStorage.setItem("isAdmin", "true");
-                alert("Admin access granted.");
-                adminButton.innerText = "Admin Logged In"; // Update button text
-                document.body.removeChild(modal); // Remove modal after login
-            } else {
-                alert("Incorrect password.");
-            }
-        });
-
-        // Event Listener for Close Button
-        closeButton.addEventListener("click", () => {
-            document.body.removeChild(modal); // Remove modal without login
-        });
+        if (password === "testpassword123") { // Change this to your actual admin password
+            localStorage.setItem("isAdmin", "true");
+            alert("Admin access granted.");
+            adminButton.innerText = "Admin Logged In"; // Update button text
+        } else {
+            alert("Incorrect password.");
+        }
     });
 }
+
 
 
 
