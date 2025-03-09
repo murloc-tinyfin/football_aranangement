@@ -370,23 +370,30 @@ function enableDateChange() {
                 get(ref(db, "globalDate")).then(snapshot => {
                     let savedDate = snapshot.val();
 
-                    if (!savedDate || newDate > savedDate) {
-                        // ✅ Only reset teams if the new date is **AFTER** the saved date
+                    if (!savedDate || newDate !== savedDate) {
+                        let today = new Date();
+                        let todayStr = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
+
+                        // ✅ Convert stored date +1 day into a real Date object
+                        let storedDateObj = new Date(savedDate);
+                        storedDateObj.setDate(storedDateObj.getDate() + 1);
+
+                        let storedDatePlusOneStr = `${storedDateObj.getFullYear()}/${String(storedDateObj.getMonth() + 1).padStart(2, '0')}/${String(storedDateObj.getDate()).padStart(2, '0')}`;
+
+                        if (todayStr > storedDatePlusOneStr) {
+                            // ✅ Only reset teams if today is later than storedDate +1 day
+                            resetTeams();
+                        }
+
+                        // ✅ Always update the new date in Firebase
                         set(ref(db, "globalDate"), newDate)
                             .then(() => {
                                 document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-                                resetTeams(); // ✅ Only reset if the date moves forward
                                 alert("Date updated successfully for everyone!");
                             })
                             .catch(error => console.error("❌ Error updating global date:", error));
                     } else {
-                        // ✅ Just update the date without clearing teams
-                        set(ref(db, "globalDate"), newDate)
-                            .then(() => {
-                                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-                                alert("Date updated successfully!");
-                            })
-                            .catch(error => console.error("❌ Error updating global date:", error));
+                        alert("The date remains the same. No changes made.");
                     }
                 });
             } else {
