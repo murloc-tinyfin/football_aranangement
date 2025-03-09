@@ -36,23 +36,19 @@ function setAdminDate(newDate) {
         .then(() => console.log("✅ Date updated in Firebase:", newDate))
         .catch(error => console.error("❌ Error updating date:", error));
 }
-/*
+
 function listenForDateChanges() {
-    const dateRef = ref(db, "eventDate");
+    const dateRef = ref(db, "globalDate");
     onValue(dateRef, (snapshot) => {
         let newDate = snapshot.val();
         if (newDate) {
-            document.getElementById("nextSaturday").innerHTML = `Next Event: ${newDate} <br> 下一个日期: ${newDate}`;
-        } else {
-            getNextSaturdayLocal();
+            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
+            checkAndResetDate(); // Check if reset is needed
         }
     });
 }
+listenForDateChanges(); // Start listening
 
-
-// ✅ Call it when the page loads
-document.addEventListener("DOMContentLoaded", getNextSaturdayLocal);
-*/
 
 // ✅ Function to update all lists (Place this above `handleSignUp()`)
 function updateAllLists() {
@@ -317,7 +313,7 @@ function checkAndResetDate() {
         let storedDateObj = new Date(savedDate);
         storedDateObj.setDate(storedDateObj.getDate() + 1); // ✅ Add 1 day to the stored date
         let storedDatePlusOneStr = formatDate(storedDateObj); // Format for comparison
-
+        
         if (todayStr >= storedDatePlusOneStr) {
             // ✅ Reset teams and update date to next Saturday in a single condition
             let nextSaturday = getNextSaturday();
