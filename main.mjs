@@ -296,9 +296,14 @@ function setNextSaturdayInFirebase() {
         .catch(error => console.error("❌ Error setting global date:", error));
 }
 
-function formatDate(date) {
-    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+function formatDate(date, useMMDD = false) {
+    let month = String(date.getMonth() + 1).padStart(2, '0');
+    let day = String(date.getDate()).padStart(2, '0');
+    let year = date.getFullYear();
+
+    return useMMDD ? `${month}${day}` : `${year}/${month}/${day}`;
 }
+
 
 
 
@@ -308,10 +313,10 @@ function checkAndResetDate() {
         if (!storedDate) return;
 
         let today = new Date();
-        let todayStr = formatDate(today); // Current date as YYYY/MM/DD
+        let todayStr = formatDate(today); // Format to YYYY/MM/DD
 
         let storedDateObj = new Date(storedDate);
-        storedDateObj.setDate(storedDateObj.getDate() + 1); // Ensure reset happens the day **after**
+        storedDateObj.setDate(storedDateObj.getDate() + 1); // Ensure reset happens the day after
 
         let storedDatePlusOneStr = formatDate(storedDateObj);
 
@@ -330,6 +335,7 @@ function checkAndResetDate() {
         }
     });
 }
+
 
 
 
@@ -360,7 +366,6 @@ function resetTeams() {
     document.getElementById("list3").innerHTML = "";
 }
 
-// ✅ Function to allow the admin to change the date (Now Global)
 function enableDateChange() {
     let dateElement = document.getElementById("nextSaturday");
     if (!dateElement) {
@@ -368,7 +373,6 @@ function enableDateChange() {
         return;
     }
 
-    // Add a button for changing the date (if not already present)
     let changeDateButton = document.getElementById("changeDateButton");
     if (!changeDateButton) {
         changeDateButton = document.createElement("button");
@@ -379,47 +383,32 @@ function enableDateChange() {
         document.body.appendChild(changeDateButton);
     }
 
-    // Event Listener for Changing the Date
     changeDateButton.addEventListener("click", () => {
-        let newDate = prompt("Enter the new date (YYYY/MM/DD):");
-        if (newDate) {
-            let isValidDate = /^\d{4}\/\d{2}\/\d{2}$/.test(newDate);
-            if (isValidDate) {
-                get(ref(db, "globalDate")).then(snapshot => {
-                    let savedDate = snapshot.val();
-
-                    if (!savedDate || newDate !== savedDate) {
-                        let today = new Date();
-                        let todayStr = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
-
-                        // ✅ Convert stored date +1 day into a real Date object
-                        let storedDateObj = new Date(savedDate);
-                        storedDateObj.setDate(storedDateObj.getDate() + 1);
-
-                        let storedDatePlusOneStr = `${storedDateObj.getFullYear()}/${String(storedDateObj.getMonth() + 1).padStart(2, '0')}/${String(storedDateObj.getDate()).padStart(2, '0')}`;
-
-                        checkAndResetDate();
-
-                        // ✅ Always update the new date in Firebase
-                        set(ref(db, "globalDate"), newDate)
-                            .then(() => {
-                                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-                                alert("Date updated successfully for everyone!");
-                            })
-                            .catch(error => console.error("❌ Error updating global date:", error));
-                    } else {
-                        alert("The date remains the same. No changes made.");
-                    }
-                });
-            } else {
-                alert("Invalid date format. Use YYYY/MM/DD.");
-            }
+        let newDateMMDD = prompt("Enter the new date (MMDD):");
+        if (!newDateMMDD || !/^\d{4}$/.test(newDateMMDD)) {
+            alert("Invalid format. Use MMDD (e.g., 0323 for March 23).");
+            return;
         }
+
+        let today = new Date();
+        let year = today.getFullYear();
+        let month = parseInt(newDateMMDD.substring(0, 2), 10) - 1;
+        let day = parseInt(newDateMMDD.substring(2, 4), 10);
+
+        let newDate = new Date(year, month, day);
+        let formattedDate = formatDate(newDate); // Convert to YYYY/MM/DD
+
+        set(ref(db, "globalDate"), formattedDate)
+            .then(() => {
+                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
+                alert("Date updated successfully!");
+            })
+            .catch(error => console.error("❌ Error updating global date:", error));
     });
 
-    // ✅ Load the current global date when enabling
     loadGlobalDate();
 }
+
 
 setInterval(() => {checkAndResetDate(); }, 60000);
 
