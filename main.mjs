@@ -39,15 +39,16 @@ function setAdminDate(newDate) {
 
 function listenForDateChanges() {
     const dateRef = ref(db, "globalDate");
+
     onValue(dateRef, (snapshot) => {
-        let newDate = snapshot.val();
-        if (newDate) {
-            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${newDate} <br> 下一个周六: ${newDate}`;
-            checkAndResetDate(); // Check if reset is needed
+        let storedDate = snapshot.val();
+        if (storedDate) {
+            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${storedDate} <br> 下一个周六: ${storedDate}`;
+            checkAndResetDate(); // ✅ Check if reset is needed every time the date updates
         }
     });
 }
-listenForDateChanges(); // Start listening
+
 
 
 // ✅ Function to update all lists (Place this above `handleSignUp()`)
@@ -295,38 +296,35 @@ function setNextSaturdayInFirebase() {
         .catch(error => console.error("❌ Error setting global date:", error));
 }
 
-// ✅ Function to automatically set next Saturday and reset teams
-// ✅ Function to check and reset the date and teams if needed
 function checkAndResetDate() {
     get(ref(db, "globalDate")).then(snapshot => {
-        let savedDate = snapshot.val();
+        let storedDate = snapshot.val();
+        if (!storedDate) return;
+
         let today = new Date();
-        let todayStr = formatDate(today); // Format today's date
+        let todayStr = formatDate(today); // Current date as YYYY/MM/DD
 
-        if (!savedDate) {
-            // ✅ No date set, initialize to next Saturday
-            let nextSaturday = getNextSaturday();
-            set(ref(db, "globalDate"), nextSaturday);
-            return;
-        }
+        let storedDateObj = new Date(storedDate);
+        storedDateObj.setDate(storedDateObj.getDate() + 1); // Ensure reset happens the day **after**
 
-        let storedDateObj = new Date(savedDate);
-        storedDateObj.setDate(storedDateObj.getDate() + 1); // ✅ Add 1 day to the stored date
-        let storedDatePlusOneStr = formatDate(storedDateObj); // Format for comparison
-        
-        if (new Date(todayStr) >= new Date(storedDatePlusOneStr)) {
-            // ✅ Reset teams and update date to next Saturday in a single condition
+        let storedDatePlusOneStr = formatDate(storedDateObj);
+
+        console.log(`🔍 Checking reset: Today = ${todayStr}, Stored+1 = ${storedDatePlusOneStr}`);
+
+        if (todayStr >= storedDatePlusOneStr) {
+            console.log("✅ Resetting teams and updating date...");
+            resetTeams(); // Clear team lists
             let nextSaturday = getNextSaturday();
             set(ref(db, "globalDate"), nextSaturday)
                 .then(() => {
                     document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
-                    resetTeams();
-                    console.log("✅ Date reset to next Saturday & teams cleared:", nextSaturday);
+                    console.log("✅ Global date updated to next Saturday.");
                 })
-                .catch(error => console.error("❌ Error resetting global date:", error));
+                .catch(error => console.error("❌ Error updating global date:", error));
         }
     });
 }
+
 
 
 // ✅ Function to get the next Saturday's date
@@ -417,6 +415,8 @@ function enableDateChange() {
     loadGlobalDate();
 }
 
+setInterval(() => {checkAndResetDate(); }, 60000);
+
 
 // ✅ Initialize Functions
 handleSignUp();
@@ -424,3 +424,4 @@ setupButtonToggles();
 setupAdminLogin();
 loadGlobalDate();
 checkAndResetDate();
+listenForDateChanges();
