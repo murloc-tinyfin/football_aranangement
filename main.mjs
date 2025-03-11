@@ -296,6 +296,12 @@ function setNextSaturdayInFirebase() {
         .catch(error => console.error("❌ Error setting global date:", error));
 }
 
+function formatDate(date) {
+    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+}
+
+
+
 function checkAndResetDate() {
     get(ref(db, "globalDate")).then(snapshot => {
         let storedDate = snapshot.val();
