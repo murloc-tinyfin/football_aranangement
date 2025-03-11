@@ -314,7 +314,7 @@ function checkAndResetDate() {
         storedDateObj.setDate(storedDateObj.getDate() + 1); // ✅ Add 1 day to the stored date
         let storedDatePlusOneStr = formatDate(storedDateObj); // Format for comparison
         
-        if (todayStr >= storedDatePlusOneStr) {
+        if (new Date(todayStr) >= new Date(storedDatePlusOneStr)) {
             // ✅ Reset teams and update date to next Saturday in a single condition
             let nextSaturday = getNextSaturday();
             set(ref(db, "globalDate"), nextSaturday)
