@@ -93,6 +93,7 @@ li:last-child {
 /* Sign-up button & Admin Login button should look the same */
 .auth-button, #signUpButton {
     width: 170px; /* Ensure all buttons have the same width */
+    height: 51px;
     padding: 14px;  /* Same padding for consistency */
     font-size: 18px;
     border: none;
