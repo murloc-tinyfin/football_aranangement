@@ -49,30 +49,94 @@ function listenForDateChanges() {
     });
 }
 
-
+function updatePlayerStats(playerName, statType) {
+    if (localStorage.getItem("isAdmin") !== "true") {
+        alert("Only admins can update player stats");
+        return;
+    }
+    
+    const statsRef = ref(db, "playerStats");
+    
+    get(statsRef).then(snapshot => {
+        let playerStats = snapshot.val() || {};
+        
+        // Initialize player stats if not exists
+        if (!playerStats[playerName]) {
+            playerStats[playerName] = { stat1: 0, stat2: 0 };
+        }
+        
+        // Increment the specified stat
+        playerStats[playerName][statType]++;
+        
+        // Save to Firebase
+        set(statsRef, playerStats)
+            .then(() => {
+                console.log(`✅ Incremented ${statType} for ${playerName}`);
+                // No need to manually update UI here as we have real-time listeners
+            })
+            .catch(error => console.error(`❌ Error updating ${statType}:`, error));
+    }).catch(error => console.error("❌ Error reading player stats:", error));
+}
 
 // ✅ Function to update all lists (Place this above `handleSignUp()`)
 function updateAllLists() {
     const teamsRef = ref(db, "teams");
+    const statsRef = ref(db, "playerStats");
 
-    onValue(teamsRef, (snapshot) => {
-        let userLists = snapshot.val() || {}; // Ensure we always get an object
+    // Listen for real-time updates to player stats
+    onValue(statsRef, (statsSnapshot) => {
+        const playerStats = statsSnapshot.val() || {};
+        
+        // Listen for real-time updates to teams
+        onValue(teamsRef, (teamsSnapshot) => {
+            let userLists = teamsSnapshot.val() || {}; // Ensure we always get an object
 
-        // ✅ Ensure lists always exist to prevent "undefined.map" error
-        userLists.list1 = userLists.list1 || [];
-        userLists.list2 = userLists.list2 || [];
-        userLists.list3 = userLists.list3 || [];
+            // Ensure lists always exist to prevent "undefined.map" error
+            userLists.list1 = userLists.list1 || [];
+            userLists.list2 = userLists.list2 || [];
+            userLists.list3 = userLists.list3 || [];
 
-        ["list1", "list2", "list3"].forEach(listId => {
-            const listElement = document.getElementById(listId);
-            if (listElement) {
-                listElement.innerHTML = userLists[listId]
-                    .map(name => `<li>${name}</li>`)
-                    .join(""); // Render the list
-            }
+            ["list1", "list2", "list3"].forEach(listId => {
+                const listElement = document.getElementById(listId);
+                if (listElement) {
+                    listElement.innerHTML = userLists[listId]
+                        .map(name => {
+                            // Get player stats (default to 0 if not found)
+                            const stats = playerStats[name] || { stat1: 0, stat2: 0 };
+                            
+                            // Create the list item with stats buttons and reset button
+                            return `
+                                <li>
+                                    <span class="player-name">${name}</span>
+                                    <span class="stat-buttons">
+                                        <button class="stat-button" 
+                                                data-player="${name}" 
+                                                data-stat="stat1" 
+                                                title="Click to increment (admin only)">
+                                            ${stats.stat1}
+                                        </button>
+                                        <button class="stat-button" 
+                                                data-player="${name}" 
+                                                data-stat="stat2" 
+                                                title="Click to increment (admin only)">
+                                            ${stats.stat2}
+                                        </button>
+                                        <button class="reset-button" 
+                                                data-player="${name}" 
+                                                title="Reset stats to zero (admin only)">
+                                            ↺
+                                        </button>
+                                    </span>
+                                </li>`;
+                        })
+                        .join(""); // Render the list
+                        
+                    // Add event listeners after rendering
+                    addStatButtonListeners(listElement);
+                    addResetButtonListeners(listElement);
+                }
+            });
         });
-    }, {
-        onlyOnce: false // Keep real-time updates
     });
 }
 
@@ -409,6 +473,104 @@ function enableDateChange() {
     loadGlobalDate();
 }
 
+function addStatButtonListeners(listElement) {
+    const buttons = listElement.querySelectorAll('.stat-button');
+    
+    buttons.forEach(button => {
+        // Remove any existing listeners to avoid duplicates
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        
+        // Add new click listener
+        newButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            const playerName = this.dataset.player;
+            const statType = this.dataset.stat;
+            updatePlayerStats(playerName, statType);
+        });
+    });
+}
+
+// Add this function to include player stats reset in the team reset function
+function modifyResetTeamsFunction() {
+    // Store reference to original function
+    const originalResetTeams = resetTeams;
+    
+    // Redefine resetTeams with additional stats reset functionality
+    resetTeams = function() {
+        const teamsRef = ref(db, "teams");
+        set(teamsRef, { list1: [], list2: [], list3: [] })
+            .then(() => {
+                console.log("✅ Teams have been reset globally!");
+                
+                // Ask about resetting player stats
+                const resetStats = confirm("Do you want to reset player stats as well?");
+                if (resetStats) {
+                    set(ref(db, "playerStats"), {})
+                        .then(() => console.log("✅ Player stats have been reset!"))
+                        .catch(error => console.error("❌ Error resetting stats:", error));
+                }
+                
+                alert("All teams have been cleared for the new date!");
+                updateAllLists(); // Refresh UI
+            })
+            .catch(error => console.error("❌ Firebase reset error:", error));
+
+        // Clear UI lists immediately
+        document.getElementById("list1").innerHTML = "";
+        document.getElementById("list2").innerHTML = "";
+        document.getElementById("list3").innerHTML = "";
+    };
+}
+
+// Add a new function to handle reset button clicks
+function addResetButtonListeners(listElement) {
+    const resetButtons = listElement.querySelectorAll('.reset-button');
+    
+    resetButtons.forEach(button => {
+        // Remove any existing listeners to avoid duplicates
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        
+        // Add new click listener
+        newButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            const playerName = this.dataset.player;
+            
+            // Check admin permissions
+            if (localStorage.getItem("isAdmin") !== "true") {
+                alert("Only admins can reset player stats");
+                return;
+            }
+            
+            // Confirm before resetting
+            if (confirm(`Reset all stats for ${playerName} to zero?`)) {
+                resetPlayerStats(playerName);
+            }
+        });
+    });
+}
+
+function resetPlayerStats(playerName) {
+    const statsRef = ref(db, "playerStats");
+    
+    get(statsRef).then(snapshot => {
+        let playerStats = snapshot.val() || {};
+        
+        // Set both stats to zero
+        if (playerStats[playerName]) {
+            playerStats[playerName] = { stat1: 0, stat2: 0 };
+            
+            // Save to Firebase
+            set(statsRef, playerStats)
+                .then(() => {
+                    console.log(`✅ Reset stats for ${playerName}`);
+                    // No need to manually update UI here as we have real-time listeners
+                })
+                .catch(error => console.error(`❌ Error resetting stats:`, error));
+        }
+    }).catch(error => console.error("❌ Error reading player stats:", error));
+}
 
 setInterval(() => {checkAndResetDate(); }, 60000);
 
@@ -420,3 +582,4 @@ setupAdminLogin();
 loadGlobalDate();
 checkAndResetDate();
 listenForDateChanges();
+modifyResetTeamsFunction();
