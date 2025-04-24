@@ -82,13 +82,59 @@ ul {
 }
 
 li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 8px;
     border-bottom: 1px solid #ddd;
 }
 
+.player-name {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.stat-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.stat-button {
+    width: 24px;
+    height: 24px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s;
+}
+
+.stat-button:hover {
+    transform: scale(1.1);
+}
+
+/* Goals - first stat */
+.stat-button:first-child {
+    background-color: #ffecb3; /* Light yellow for goals */
+}
+
+/* Assists - second stat */
+.stat-button:last-child {
+    background-color: #bbdefb; /* Light blue for assists */
+}
+
+
 li:last-child {
     border-bottom: none;
 }
+
+
 
 /* Sign-up button & Admin Login button should look the same */
 .auth-button, #signUpButton {
@@ -132,4 +178,32 @@ li:last-child {
 #nextSaturday {
     font-size: 24px; /* Adjust size as needed */
     font-weight: bold;
+}
+
+.reset-button {
+    width: 24px;
+    height: 24px;
+    background-color: #ffcdd2; /* Light red for reset */
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s;
+    margin-left: 2px;
+}
+
+.reset-button:hover {
+    transform: scale(1.1);
+    background-color: #ef9a9a; /* Darker on hover */
+}
+
+/* Update the stat-buttons class to accommodate the new button */
+.stat-buttons {
+    display: flex;
+    gap: 3px; /* Reduced gap to fit the reset button */
 }
