@@ -11,7 +11,7 @@ if (!window.db) {
 
 /*
 
-// ✅ Function to calculate and display the next Saturday (Keep this at the top)
+// ✅ Function to calculate and display the next activity (Keep this at the top)
 function getNextSaturdayLocal() {
     listenForDateChanges(); // Listen for admin updates first
     let currentDate = new Date();
@@ -279,7 +279,7 @@ function loadGlobalDate() {
     get(dateRef).then(snapshot => {
         let savedDate = snapshot.val();
         if (savedDate) {
-            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${savedDate} <br> 下一个周六: ${savedDate}`;
+            document.getElementById("nextSaturday").innerHTML = `next activity: ${savedDate} <br> 下一次活动: ${savedDate}`;
         } else {
             setNextSaturdayInFirebase(); // Initialize if missing
         }
@@ -290,8 +290,8 @@ function setNextSaturdayInFirebase() {
     let nextSaturday = getNextSaturday();
     set(ref(db, "globalDate"), nextSaturday)
         .then(() => {
-            console.log("✅ Next Saturday date set globally:", nextSaturday);
-            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
+            console.log("✅ next activity date set globally:", nextSaturday);
+            document.getElementById("nextSaturday").innerHTML = `next activity: ${nextSaturday} <br> 下一次活动: ${nextSaturday}`;
         })
         .catch(error => console.error("❌ Error setting global date:", error));
 }
@@ -328,8 +328,8 @@ function checkAndResetDate() {
             let nextSaturday = getNextSaturday();
             set(ref(db, "globalDate"), nextSaturday)
                 .then(() => {
-                    document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${nextSaturday} <br> 下一个周六: ${nextSaturday}`;
-                    console.log("✅ Global date updated to next Saturday.");
+                    document.getElementById("nextSaturday").innerHTML = `next activity: ${nextSaturday} <br> 下一次活动: ${nextSaturday}`;
+                    console.log("✅ Global date updated to next activity.");
                 })
                 .catch(error => console.error("❌ Error updating global date:", error));
         }
@@ -339,7 +339,7 @@ function checkAndResetDate() {
 
 
 
-// ✅ Function to get the next Saturday's date
+// ✅ Function to get the next activity's date
 function getNextSaturday() {
     let currentDate = new Date();
     let daysUntilSaturday = (6 - currentDate.getDay() + 7) % 7 || 7;
@@ -400,7 +400,7 @@ function enableDateChange() {
 
         set(ref(db, "globalDate"), formattedDate)
             .then(() => {
-                document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
+                document.getElementById("nextSaturday").innerHTML = `next activity: ${formattedDate} <br> 下一次活动: ${formattedDate}`;
                 alert("Date updated successfully!");
             })
             .catch(error => console.error("❌ Error updating global date:", error));
