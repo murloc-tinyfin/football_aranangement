@@ -23,6 +23,32 @@
 
         loadCSS(); // Run on page load
     </script>
+    <style>
+        /* Add these inline styles to ensure the stats display correctly */
+        .stat-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .stat-button {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 6px;
+            min-width: 24px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .stat-button:first-child {
+            background-color: #ffecb3;
+        }
+        
+        .stat-button:last-child {
+            background-color: #bbdefb;
+        }
+    </style>
 </head>
 <body>
     <h1 id="nextSaturday">Loading.../加载中...</h1>
