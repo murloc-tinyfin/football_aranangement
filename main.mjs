@@ -321,7 +321,7 @@ function setupAdminLogin() {
         let password = prompt("Enter admin password:");
         if (password === null) return; // User canceled input
 
-        if (password === "testpassword123") { // Change this to your actual admin password
+        if (password === "test123") { // Change this to your actual admin password
             localStorage.setItem("isAdmin", "true");
             alert("Admin access granted.");
             adminButton.innerText = "Admin Logged In";
