@@ -43,7 +43,7 @@ function listenForDateChanges() {
     onValue(dateRef, (snapshot) => {
         let storedDate = snapshot.val();
         if (storedDate) {
-            document.getElementById("nextSaturday").innerHTML = `Next Saturday: ${storedDate} <br> 下一个周六: ${storedDate}`;
+            document.getElementById("nextSaturday").innerHTML = `Next Event: ${storedDate} <br> 下一次活动: ${storedDate}`;
             checkAndResetDate(); // ✅ Check if reset is needed every time the date updates
         }
     });
