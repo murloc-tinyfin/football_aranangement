@@ -25,7 +25,7 @@ function getNextSaturdayLocal() {
     
     const element = document.getElementById("nextSaturday");
     if (element) {
-        element.innerHTML = `Next Saturday: ${formattedDate} <br> 下一个周六: ${formattedDate}`;
+        element.innerHTML = `Next Event: ${formattedDate} <br> 下一次活动: ${formattedDate}`;
     }
 }
 
