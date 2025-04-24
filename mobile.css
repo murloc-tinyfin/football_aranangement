@@ -114,6 +114,9 @@ li {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 li:last-child {
@@ -132,8 +135,73 @@ li:last-child {
     display: none;
 }
 
-
 #nextSaturday {
     font-size: 16px; /* Smaller size for mobile */
     font-weight: bold;
+}
+
+/* Player name should align left and grow to fill space */
+.player-name {
+    flex-grow: 1;
+    text-align: left;
+}
+
+/* Stat buttons container */
+.stat-buttons {
+    display: flex;
+    gap: 3px; /* Reduced gap to fit the reset button */
+}
+
+/* Stat button styling */
+.stat-button {
+    width: 24px;
+    height: 24px;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s;
+}
+
+.stat-button:hover {
+    transform: scale(1.1);
+}
+
+/* Goals - first stat */
+.stat-button:first-child {
+    background-color: #ffecb3; /* Light yellow for goals */
+}
+
+/* Assists - second stat */
+.stat-button:nth-child(2) {
+    background-color: #bbdefb; /* Light blue for assists */
+}
+
+/* Reset button styling */
+.reset-button {
+    width: 24px;
+    height: 24px;
+    background-color: #ffcdd2; /* Light red for reset */
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s;
+    margin-left: 2px;
+}
+
+.reset-button:hover {
+    transform: scale(1.1);
+    background-color: #ef9a9a; /* Darker on hover */
 }
